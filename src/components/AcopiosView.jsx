@@ -36,14 +36,24 @@ export default function AcopiosView({ acopios, onNuevo }) {
 
   return (
     <section>
-      <h2 className="disp font-bold text-lg mb-3">Zonas críticas y centros de acopio</h2>
-      <div className="mb-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-500">
-        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">Alta</span>
-        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">Media</span>
-        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">Baja</span>
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/50">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-red-600">
+            <AlertTriangleIcon className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="disp font-bold text-lg text-slate-950">Zonas críticas</h2>
+            <p className="text-sm text-slate-500">Puntos de riesgo y áreas que requieren atención inmediata.</p>
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-500">
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">Alta</span>
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">Media</span>
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">Baja</span>
+        </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="mt-4 space-y-4">
         {activos.map(a => (
           <div key={a.id} className={`panel border p-4 ${borde[a.gravedad]}`}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -73,6 +83,21 @@ export default function AcopiosView({ acopios, onNuevo }) {
         {activos.length === 0 && (
           <p className="text-center text-stone-500 text-sm py-10">Aún no hay reportes de acopio. Registra el primero.</p>
         )}
+      </div>
+
+      <div className="mt-6 rounded-[28px] border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-emerald-100/70 p-4 shadow-sm shadow-emerald-100/70">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+            <PackageIcon className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="disp font-bold text-lg text-slate-950">Centros de acopio</h3>
+            <p className="text-sm text-slate-600">Puntos de ayuda y distribución para la comunidad.</p>
+          </div>
+        </div>
+        <div className="mt-3 rounded-2xl border border-emerald-200/70 bg-white/80 p-3 text-sm text-slate-600">
+          Aquí podrás identificar con claridad los puntos donde la comunidad puede recibir apoyo, agua, alimentos o asistencia básica.
+        </div>
       </div>
 
       {archivados.length > 0 && (
