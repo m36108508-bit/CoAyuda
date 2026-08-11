@@ -36,15 +36,15 @@ export default function AcopiosView({ acopios, onNuevo }) {
   return (
     <section>
       <h2 className="disp font-bold text-lg mb-3">Zonas críticas y centros de acopio</h2>
-      <div className="flex gap-2 mb-4 text-xs font-semibold">
-        <span className="px-2.5 py-1 rounded-full bg-red-100 text-red-800 border border-red-200">● Alta</span>
-        <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200">● Media</span>
-        <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">● Baja</span>
+      <div className="mb-4 flex flex-wrap gap-2 text-xs font-semibold">
+        <span className="rounded-full border border-red-200 bg-red-100 px-2.5 py-1 text-red-800">● Alta</span>
+        <span className="rounded-full border border-amber-200 bg-amber-100 px-2.5 py-1 text-amber-800">● Media</span>
+        <span className="rounded-full border border-emerald-200 bg-emerald-100 px-2.5 py-1 text-emerald-800">● Baja</span>
       </div>
 
       <div className="space-y-3">
         {activos.map(a => (
-          <div key={a.id} className={`bg-white border border-line rounded-xl p-4 border-l-4 ${borde[a.gravedad]}`}>
+          <div key={a.id} className={`panel border-l-4 p-4 ${borde[a.gravedad]}`}>
             <div className="flex justify-between items-start gap-2">
               <h4 className="font-bold text-base">{a.nombre}</h4>
               <span className={`text-[11px] font-bold px-2 py-1 rounded-full ${badge[a.gravedad]}`}>{a.gravedad.toUpperCase()}</span>
@@ -53,7 +53,7 @@ export default function AcopiosView({ acopios, onNuevo }) {
             <p className="text-sm mt-2 font-medium">⚠️ {a.necesidad}</p>
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-line">
               <span className="text-[11px] text-stone-400">{tiempoRelativo(a.creado_en)}</span>
-              <button onClick={() => votar(a.id)} className="focus-ring text-xs font-semibold px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200">
+              <button onClick={() => votar(a.id)} className="focus-ring rounded-full bg-stone-100 px-3 py-1.5 text-[11px] font-bold text-stone-700 hover:bg-stone-200">
                 ✓ Ya solucionado ({a.votos_solucionado || 0}/3)
               </button>
             </div>

@@ -95,6 +95,55 @@ begin
 end;
 $$;
 
+create or replace function update_persona(
+  p_persona_id uuid,
+  p_nombre text,
+  p_cedula text,
+  p_estado text,
+  p_ubicacion text,
+  p_telefono text,
+  p_foto_url text
+)
+returns void
+language plpgsql
+security definer
+as $$
+begin
+  update personas
+  set nombre = p_nombre,
+      cedula = p_cedula,
+      estado = p_estado,
+      ubicacion = p_ubicacion,
+      telefono = p_telefono,
+      foto_url = p_foto_url,
+      actualizado_en = now()
+  where id = p_persona_id;
+end;
+$$;
+
+create or replace function delete_persona(p_persona_id uuid)
+returns void
+language plpgsql
+security definer
+as $$
+declare v_foto_url text;
+        v_path text;
+begin
+  select foto_url into v_foto_url from personas where id = p_persona_id;
+
+  if v_foto_url is not null then
+    v_path := substring(v_foto_url from '.*?/personas/(.*)$');
+    if v_path is not null then
+      delete from storage.objects
+      where bucket_id = 'personas'
+        and name = v_path;
+    end if;
+  end if;
+
+  delete from personas where id = p_persona_id;
+end;
+$$;
+
 -- Reabrir es siempre más fácil que cerrar: 1 sola llamada, sin umbral.
 create or replace function reabrir_persona(p_persona_id uuid)
 returns void
@@ -145,6 +194,8 @@ $$;
 
 -- Permite al cliente (rol anon) ejecutar únicamente estas funciones controladas.
 grant execute on function votar_persona_localizado(uuid, text) to anon;
+grant execute on function update_persona(uuid, text, text, text, text, text, text) to anon;
+grant execute on function delete_persona(uuid) to anon;
 grant execute on function reabrir_persona(uuid) to anon;
 grant execute on function votar_acopio_solucionado(uuid, text) to anon;
 grant execute on function reabrir_acopio(uuid) to anon;

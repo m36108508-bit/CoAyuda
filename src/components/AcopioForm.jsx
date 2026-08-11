@@ -27,34 +27,37 @@ export default function AcopioForm({ onClose, onToast }) {
   }
 
   return (
-    <div className="fixed inset-0 z-40 bg-black/50 flex items-end sm:items-center justify-center">
-      <div className="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-5 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="disp font-bold text-lg">Reportar zona / acopio</h3>
-          <button onClick={onClose} className="text-2xl leading-none">✕</button>
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/50 sm:items-center">
+      <div className="max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 sm:max-w-md sm:rounded-2xl">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <p className="section-label mb-1">Reporte</p>
+            <h3 className="disp text-lg font-black text-slate-900">Zona / acopio</h3>
+          </div>
+          <button onClick={onClose} className="text-2xl leading-none text-slate-600">✕</button>
         </div>
         <form onSubmit={submit} className="space-y-3">
           <div>
-            <label className="text-xs font-semibold text-stone-600">Nombre del lugar / zona *</label>
-            <input required value={nombre} onChange={e => setNombre(e.target.value)} className="focus-ring w-full border border-line rounded-lg p-2.5 mt-1" />
+            <label className="text-xs font-semibold text-slate-600">Nombre del lugar / zona *</label>
+            <input required value={nombre} onChange={e => setNombre(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-slate-800 focus-ring" />
           </div>
           <div>
-            <label className="text-xs font-semibold text-stone-600">Dirección / Ciudad *</label>
-            <input required value={direccion} onChange={e => setDireccion(e.target.value)} className="focus-ring w-full border border-line rounded-lg p-2.5 mt-1" />
+            <label className="text-xs font-semibold text-slate-600">Dirección / Ciudad *</label>
+            <input required value={direccion} onChange={e => setDireccion(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-slate-800 focus-ring" />
           </div>
           <div>
-            <label className="text-xs font-semibold text-stone-600">Necesidad urgente *</label>
-            <input required placeholder="Ej: falta agua, faltan medicamentos" value={necesidad} onChange={e => setNecesidad(e.target.value)} className="focus-ring w-full border border-line rounded-lg p-2.5 mt-1" />
+            <label className="text-xs font-semibold text-slate-600">Necesidad urgente *</label>
+            <input required placeholder="Ej: falta agua, faltan medicamentos" value={necesidad} onChange={e => setNecesidad(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-slate-800 focus-ring" />
           </div>
           <div>
-            <label className="text-xs font-semibold text-stone-600">Nivel de gravedad *</label>
-            <select value={gravedad} onChange={e => setGravedad(e.target.value)} className="focus-ring w-full border border-line rounded-lg p-2.5 mt-1">
+            <label className="text-xs font-semibold text-slate-600">Nivel de gravedad *</label>
+            <select value={gravedad} onChange={e => setGravedad(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-slate-800 focus-ring">
               <option value="alta">Alta</option>
               <option value="media">Media</option>
               <option value="baja">Baja</option>
             </select>
           </div>
-          <button disabled={saving} type="submit" className="w-full py-3 rounded-lg bg-alert text-white font-bold mt-2 disabled:opacity-60">
+          <button disabled={saving} type="submit" className="primary-button mt-2 w-full rounded-xl py-3 text-sm font-bold disabled:opacity-60">
             {saving ? 'Guardando...' : 'Guardar reporte'}
           </button>
         </form>

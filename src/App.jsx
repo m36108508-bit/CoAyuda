@@ -13,7 +13,7 @@ export default function App() {
   const [view, setView] = useState('personas')
   const [personas, setPersonas] = useState([])
   const [acopios, setAcopios] = useState([])
-  const [modal, setModal] = useState(null) // 'persona' | 'acopio' | null
+  const [modal, setModal] = useState(null)
   const [toast, setToast] = useState('')
   const [pendientes, setPendientes] = useState(pendingCount())
 
@@ -31,23 +31,36 @@ export default function App() {
     if (a) setAcopios(a)
   }, [])
 
+  const eliminarPersona = useCallback(async (personaId, nombre) => {
+    const confirmado = window.confirm(`¿Quieres eliminar este reporte de ${nombre}?\n\nEsta acción no se puede deshacer.`)
+    if (!confirmado) return
+
+    try {
+      const { error } = await supabase.rpc('delete_persona', { p_persona_id: personaId })
+      if (error) throw error
+      setPersonas(prev => prev.filter(p => p.id !== personaId))
+      showToast('Reporte eliminado ✓')
+    } catch (err) {
+      console.error(err)
+      showToast('No se pudo eliminar el reporte')
+    }
+  }, [showToast])
+
   useEffect(() => {
     cargarDatos()
 
-    // Tiempo real: cualquier reporte nuevo o voto aparece al instante en todos los dispositivos.
     const canal = supabase
       .channel('rsc-cambios')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'personas' }, cargarDatos)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'acopios' }, cargarDatos)
       .subscribe()
 
-    // Reintenta la cola offline al volver la conexión.
     const reintentar = async () => {
       await flushQueue(supabase, setPendientes)
       cargarDatos()
     }
     window.addEventListener('online', reintentar)
-    const interval = setInterval(reintentar, 15000) // por si "online" no dispara bien en móviles
+    const interval = setInterval(reintentar, 15000)
 
     return () => {
       supabase.removeChannel(canal)
@@ -57,25 +70,35 @@ export default function App() {
   }, [cargarDatos])
 
   return (
-    <div className="pb-24 min-h-screen bg-paper">
+    <div className="app-shell pb-24">
       <Header pendientes={pendientes} />
 
-      <main className="max-w-2xl mx-auto px-4 mt-4">
+      <main className="max-w-2xl mx-auto px-4 mt-5 pb-4">
         {view === 'personas' && (
-          <PersonasView personas={personas} onNuevo={() => setModal('persona')} />
+          <PersonasView
+            personas={personas}
+            onNuevo={() => setModal({ type: 'persona', persona: null })}
+            onEditar={(persona) => setModal({ type: 'persona', persona })}
+            onEliminar={eliminarPersona}
+          />
         )}
         {view === 'acopios' && (
-          <AcopiosView acopios={acopios} onNuevo={() => setModal('acopio')} />
+          <AcopiosView acopios={acopios} onNuevo={() => setModal({ type: 'acopio' })} />
         )}
         {view === 'guia' && <GuiaView />}
       </main>
 
       <BottomNav view={view} setView={setView} />
 
-      {modal === 'persona' && (
-        <PersonaForm personas={personas} onClose={() => setModal(null)} onToast={showToast} />
+      {modal?.type === 'persona' && (
+        <PersonaForm
+          personas={personas}
+          persona={modal.persona}
+          onClose={() => setModal(null)}
+          onToast={showToast}
+        />
       )}
-      {modal === 'acopio' && (
+      {modal?.type === 'acopio' && (
         <AcopioForm onClose={() => setModal(null)} onToast={showToast} />
       )}
 

@@ -15,7 +15,7 @@ function tiempoRelativo(ts) {
 }
 const estadoLabel = { desaparecido: 'Desaparecido', encontrado: 'Encontrado', salvo: 'A salvo' }
 
-export default function PersonasView({ personas, onNuevo }) {
+export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }) {
   const [tab, setTab] = useState('busca')
   const [q, setQ] = useState('')
 
@@ -68,19 +68,34 @@ export default function PersonasView({ personas, onNuevo }) {
 
   return (
     <section>
-      <div className="mb-3 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-800">
-        <span className="font-bold">{activas.length}</span> personas activas en búsqueda
+      <div className="panel mb-4 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-sky-50 p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="brand-mark">C</div>
+            <div>
+              <p className="section-label mb-1">Inicio</p>
+              <h2 className="disp text-xl font-black tracking-tight text-slate-900">CoAyuda</h2>
+            </div>
+          </div>
+          <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-bold text-blue-700">
+            {activas.length} activas
+          </span>
+        </div>
+
+        <p className="mt-3 text-sm text-slate-600">
+          Reporta personas, ubica centros de ayuda y comparte información útil para la comunidad.
+        </p>
       </div>
 
-      <div className="flex gap-2 mb-3">
+      <div className="mb-4 grid grid-cols-2 gap-2">
         <button
           onClick={() => setTab('busca')}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-bold border border-line ${tab === 'busca' ? 'bg-sky-600 text-white' : 'bg-white text-slate-700'}`}
+          className={`rounded-2xl border px-3 py-2.5 text-sm font-bold transition ${tab === 'busca' ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-200' : 'border-slate-200 bg-white text-slate-700'}`}
         >🔴 Se busca</button>
         <button
           onClick={() => setTab('salvo')}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-bold border border-line ${tab === 'salvo' ? 'bg-sky-600 text-white' : 'bg-white text-slate-700'}`}
-        >🟢 Reportado a salvo</button>
+          className={`rounded-2xl border px-3 py-2.5 text-sm font-bold transition ${tab === 'salvo' ? 'border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-200' : 'border-slate-200 bg-white text-slate-700'}`}
+        >🟢 A salvo</button>
       </div>
 
       <div className="relative mb-4">
@@ -88,7 +103,7 @@ export default function PersonasView({ personas, onNuevo }) {
           value={q}
           onChange={e => setQ(e.target.value)}
           placeholder="Buscar por nombre, cédula o ubicación..."
-          className="focus-ring w-full py-3 pl-10 pr-3 rounded-lg border border-slate-200 text-base bg-white text-slate-800"
+          className="focus-ring w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-base text-slate-800 shadow-sm"
         />
         <span className="absolute left-3 top-3 text-slate-400">🔎</span>
       </div>
@@ -97,7 +112,7 @@ export default function PersonasView({ personas, onNuevo }) {
         {filtradas.map(p => {
           const color = p.estado === 'desaparecido' ? 'border-l-red-600' : p.estado === 'salvo' ? 'border-l-emerald-600' : 'border-l-amber-600'
           return (
-            <div key={p.id} className={`bg-white border border-line rounded-xl p-4 border-l-4 ${color}`}>
+            <div key={p.id} className={`panel border-l-4 p-4 ${color}`}>
               {p.foto_url && (
                 <img src={p.foto_url} alt={p.nombre} className="mb-3 h-40 w-full object-cover rounded-lg border border-slate-200" />
               )}
@@ -112,13 +127,19 @@ export default function PersonasView({ personas, onNuevo }) {
               </div>
               <p className="text-sm mt-2">📍 {p.ubicacion}</p>
               {p.telefono && <a href={`tel:${p.telefono}`} className="text-sm text-blue-700 font-semibold underline">📞 {p.telefono}</a>}
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-line gap-2">
+              <div className="mt-3 flex items-center justify-between gap-2 border-t border-slate-200 pt-3">
                 <span className="text-[11px] text-stone-400">{tiempoRelativo(p.creado_en)}</span>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => compartirReporte(p)} className="focus-ring text-xs font-semibold px-2.5 py-1.5 rounded-full bg-sky-100 text-sky-700">
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <button onClick={() => onEditar?.(p)} className="focus-ring rounded-full bg-blue-100 px-2.5 py-1.5 text-[11px] font-bold text-blue-700">
+                    ✏️ Editar
+                  </button>
+                  <button onClick={() => onEliminar?.(p.id, p.nombre)} className="focus-ring rounded-full bg-red-100 px-2.5 py-1.5 text-[11px] font-bold text-red-700">
+                    🗑 Eliminar
+                  </button>
+                  <button onClick={() => compartirReporte(p)} className="focus-ring rounded-full bg-sky-100 px-2.5 py-1.5 text-[11px] font-bold text-sky-700">
                     ↗ Compartir
                   </button>
-                  <button onClick={() => votar(p.id)} className="focus-ring text-xs font-semibold px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200">
+                  <button onClick={() => votar(p.id)} className="focus-ring rounded-full bg-stone-100 px-3 py-1.5 text-[11px] font-bold text-stone-700 hover:bg-stone-200">
                     ✓ Ya localizado ({p.votos_localizado || 0}/5)
                   </button>
                 </div>
@@ -131,7 +152,6 @@ export default function PersonasView({ personas, onNuevo }) {
         )}
       </div>
 
-      {/* Reportes marcados como posiblemente resueltos: visibles, no borrados */}
       <ArchivadosPersonas personas={personas} onReabrir={reabrir} />
 
       <FabButton onClick={onNuevo} />

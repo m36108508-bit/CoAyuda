@@ -26,40 +26,43 @@ export default function GuiaView() {
 
   return (
     <section>
-      <h2 className="disp font-bold text-lg mb-1">Guía de emergencia sísmica</h2>
-      <p className="text-sm text-stone-600 mb-4">Funciona sin internet. Guárdala en tu pantalla de inicio.</p>
+      <div className="panel mb-4 p-4">
+        <p className="section-label mb-2">Guía</p>
+        <h2 className="disp text-xl font-black tracking-tight text-slate-900">Emergencia y acción inmediata</h2>
+        <p className="mt-2 text-sm text-slate-600">Funciona sin internet. Guárdala en tu pantalla de inicio.</p>
+      </div>
 
-      <div className="bg-white border border-line rounded-xl p-4 mb-4">
-        <h3 className="font-bold text-sm mb-3 uppercase tracking-wide text-stone-500">Llamadas directas</h3>
+      <div className="panel mb-4 p-4">
+        <h3 className="section-label mb-3">Llamadas directas</h3>
         <div className="grid grid-cols-3 gap-2 text-center">
-          <a href="tel:132" className="focus-ring block rounded-lg bg-red-600 text-white py-3">
-            <div className="text-xl font-black">132</div><div className="text-[11px]">Cruz Roja</div>
+          <a href="tel:132" className="focus-ring block rounded-xl bg-red-600 py-3 text-white shadow-sm">
+            <div className="text-xl font-black">132</div><div className="text-[11px] font-semibold">Cruz Roja</div>
           </a>
-          <a href="tel:144" className="focus-ring block rounded-lg bg-amber-600 text-white py-3">
-            <div className="text-xl font-black">144</div><div className="text-[11px]">Defensa Civil</div>
+          <a href="tel:144" className="focus-ring block rounded-xl bg-amber-500 py-3 text-white shadow-sm">
+            <div className="text-xl font-black">144</div><div className="text-[11px] font-semibold">Defensa Civil</div>
           </a>
-          <a href="tel:119" className="focus-ring block rounded-lg bg-orange-700 text-white py-3">
-            <div className="text-xl font-black">119</div><div className="text-[11px]">Bomberos</div>
+          <a href="tel:119" className="focus-ring block rounded-xl bg-orange-600 py-3 text-white shadow-sm">
+            <div className="text-xl font-black">119</div><div className="text-[11px] font-semibold">Bomberos</div>
           </a>
         </div>
-        <a href="tel:123" className="focus-ring mt-2 block text-center rounded-lg border-2 border-ink py-2.5 font-bold text-sm">
+        <a href="tel:123" className="focus-ring mt-3 block rounded-xl border-2 border-slate-300 bg-slate-50 py-2.5 text-center text-sm font-black text-slate-800">
           Línea única de emergencias: 123
         </a>
       </div>
 
-      <div className="bg-white border border-line rounded-xl p-4">
-        <h3 className="font-bold text-sm mb-3 uppercase tracking-wide text-stone-500">Checklist — qué hacer ahora</h3>
+      <div className="panel p-4">
+        <h3 className="section-label mb-3">Checklist — qué hacer ahora</h3>
         <ul className="space-y-2">
           {PASOS.map((texto, i) => (
             <li key={i}>
-              <label className="flex items-start gap-3 p-2 rounded-lg hover:bg-stone-50 cursor-pointer">
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl p-2.5 transition hover:bg-slate-50">
                 <input
                   type="checkbox"
                   checked={!!checked[i]}
                   onChange={() => toggle(i)}
-                  className="mt-1 w-5 h-5 accent-alert shrink-0"
+                  className="mt-1 h-5 w-5 shrink-0 accent-blue-600"
                 />
-                <span className={`text-sm ${checked[i] ? 'line-through text-stone-400' : ''}`}>{texto}</span>
+                <span className={`text-sm leading-relaxed ${checked[i] ? 'text-slate-400 line-through' : 'text-slate-700'}`}>{texto}</span>
               </label>
             </li>
           ))}
