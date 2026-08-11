@@ -97,12 +97,6 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
             <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700">
               {activas.length} activas
             </span>
-            <button
-              onClick={onNuevo}
-              className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-slate-950/10 transition hover:bg-slate-800"
-            >
-              Nuevo reporte
-            </button>
           </div>
         </div>
 
