@@ -97,22 +97,28 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
           </span>
         </div>
 
-        <p className="mt-3 text-sm leading-relaxed text-blue-50/95">
+        <p className="mt-3 text-sm font-semibold leading-6 text-blue-100 max-w-xl">
           Unidos para encontrar a las personas que faltan, ubicar ayuda y actuar con claridad cuando más importa.
         </p>
 
-        <div className="mt-4 grid grid-cols-1 gap-2 text-center text-[11px] font-bold text-blue-50 sm:grid-cols-3">
-          <div className="rounded-xl bg-white/10 px-2 py-2 backdrop-blur-sm">
-            <div className="mb-1 flex justify-center"><UserIcon className="h-4 w-4" /></div>
-            Personas
+        <div className="mt-4 flex flex-wrap justify-center gap-2 text-[11px] font-bold text-blue-50">
+          <div className="rounded-full bg-white/10 px-3 py-2 backdrop-blur-sm">
+            <div className="flex items-center justify-center gap-2">
+              <UserIcon className="h-4 w-4" />
+              Personas
+            </div>
           </div>
-          <div className="rounded-xl bg-white/10 px-2 py-2 backdrop-blur-sm">
-            <div className="mb-1 flex justify-center"><PackageIcon className="h-4 w-4" /></div>
-            Ayuda
+          <div className="rounded-full bg-white/10 px-3 py-2 backdrop-blur-sm">
+            <div className="flex items-center justify-center gap-2">
+              <PackageIcon className="h-4 w-4" />
+              Ayuda
+            </div>
           </div>
-          <div className="rounded-xl bg-white/10 px-2 py-2 backdrop-blur-sm">
-            <div className="mb-1 flex justify-center"><ShieldIcon className="h-4 w-4" /></div>
-            Guía
+          <div className="rounded-full bg-white/10 px-3 py-2 backdrop-blur-sm">
+            <div className="flex items-center justify-center gap-2">
+              <ShieldIcon className="h-4 w-4" />
+              Guía
+            </div>
           </div>
         </div>
       </div>
