@@ -38,12 +38,15 @@ export default function App() {
 
     try {
       const { error } = await supabase.rpc('delete_persona', { p_persona_id: personaId, p_device_id: getDeviceId() })
-      if (error) throw error
+      if (error) {
+        throw error
+      }
       setPersonas(prev => prev.filter(p => p.id !== personaId))
       showToast('Reporte eliminado')
     } catch (err) {
       console.error(err)
-      showToast('No se pudo eliminar el reporte')
+      const message = err?.details || err?.message || 'No se pudo eliminar el reporte'
+      showToast(message)
     }
   }, [showToast])
 

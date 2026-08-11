@@ -1,68 +1,68 @@
 import { useEffect, useState } from 'react'
 
 const PASOS = [
-  'Aléjate de ventanas, espejos y objetos que puedan caer.',
-  'Ubícate junto a una columna, bajo un mueble resistente o en el "triángulo de vida".',
-  'Si estás en la calle, aléjate de edificios, postes y cables eléctricos.',
-  'No uses ascensores. Usa siempre las escaleras.',
-  'Después del sismo, revisa si hay heridos antes de moverte tú mismo.',
-  'Cierra la llave de gas y desconecta la energía eléctrica si es seguro hacerlo.',
-  'No regreses a edificios dañados por ningún motivo.',
-  'Ten lista una mochila de emergencia con agua, linterna, radio y documentos.'
+  'Aléjate de objetos que puedan caer y busca un lugar seguro.',
+  'Refúgiate bajo una mesa, junto a una columna o en un ángulo protegido.',
+  'Aléjate de líneas eléctricas, postes y fachadas inestables si estás afuera.',
+  'No uses ascensor. Usa escaleras solo si son seguras.',
+  'Revisa si hay heridos antes de moverte y da prioridad a tu propia seguridad.',
+  'Cierra gas y electricidad solo si puedes hacerlo sin ponerte en riesgo.',
+  'No vuelvas a entrar a estructuras dañadas.',
+  'Mantén lista una mochila con agua, alimentos, linterna, radio y documentos.'
 ]
 const GUIA_COMPLETA = [
   {
     titulo: 'Antes del sismo',
     items: [
-      'Ten una mochila con agua, linterna, botiquín básico, radio portátil, documentos, cargador y medicamentos.',
-      'Identifica rutas seguras de evacuación y puntos de reunión con tu familia o vecinos.',
-      'Asegura muebles, estanterías y objetos pesados para reducir riesgos.',
-      'Guarda números de emergencia y el contacto de personas cercanas en tu teléfono.'
+      'Prepara una mochila con agua, alimentos, linterna, cargador, radio y primeros auxilios.',
+      'Ubica rutas de evacuación y puntos de encuentro seguros con tu familia o vecinos.',
+      'Asegura muebles y objetos pesados que puedan caer.',
+      'Guarda los números de emergencia y el contacto de personas de confianza.'
     ]
   },
   {
     titulo: 'Durante el sismo',
     items: [
-      'Si estás dentro, protege tu cabeza y cuello y busca refugio bajo una mesa o junto a una columna.',
-      'Si estás en la calle, aléjate de edificios, postes, cables y vehículos en movimiento.',
-      'No corras ni uses ascensores. Mantente tranquilo y espera a que termine la vibración.',
-      'Si estás en cama, rueda a un lado y protege tu cabeza con una almohada o brazos.'
+      'Protege tu cabeza y cuello con los brazos o un objeto resistente.',
+      'Si estás dentro, busca abrigo bajo una mesa o junto a una columna estable.',
+      'Si estás afuera, aléjate de edificios, ventanas y cables eléctricos.',
+      'No te muevas apresurado. Espera a que termine la sacudida antes de evaluar.'
     ]
   },
   {
     titulo: 'Después del sismo',
     items: [
-      'Revisa si hay personas heridas o atrapadas y llama a emergencias si hay riesgo inmediato.',
-      'Desconecta la energía eléctrica y cierra la llave de gas si es seguro hacerlo.',
-      'Evita entrar a edificios dañados y no uses el teléfono salvo que sea necesario.',
-      'Si hay derrumbes, escucha ruidos, olores a gas o agua y mantén la calma.'
+      'Evalúa tu entorno antes de moverte y mantén la calma.',
+      'Revisa si hay personas heridas y pide ayuda si hay lesiones graves.',
+      'Corta gas y electricidad solo si es seguro hacerlo.',
+      'No ingreses a edificios que presenten grietas, inclinaciones o daños visibles.'
     ]
   },
   {
-    titulo: 'Qué hacer por los demás',
+    titulo: 'Cómo ayudar de forma segura',
     items: [
-      'Ayuda a personas mayores, niños, personas con discapacidad o quienes estén desorientadas.',
-      'Si alguien está consciente pero está conmocionado, quédate con esa persona y mantén la calma.',
-      'Comparte información útil: ubicaciones, heridos, riesgos y necesidades inmediatas.',
-      'Si ves a alguien atrapado, no intentes moverlo sin evaluar el riesgo de más derrumbes.'
+      'Prioriza a bebés, ancianos, personas con discapacidad y quienes estén desorientados.',
+      'Comparte información clara sobre ubicaciones, riesgos y necesidades.',
+      'No muevas a personas con posibles lesiones de columna salvo que haya peligro inmediato.',
+      'Ayuda con agua, abrigo y calma, sin exponerte tú mismo.'
     ]
   },
   {
-    titulo: 'Qué NO hacer',
+    titulo: 'Qué evitar',
     items: [
-      'No uses ascensores ni entres a edificios inestables.',
-      'No te acerques a cables caídos ni a zonas con gas o agua comprometida.',
-      'No corras ni tomes decisiones impulsivas si hay polvo, escombros o pánico.',
-      'No hagas grandes movimientos a personas con posibles lesiones graves si no es necesario.'
+      'No uses ascensores, ni vuelvas a ingresar a estructuras inestables.',
+      'No te acerques a cables caídos, fugas de gas o filtraciones eléctricas.',
+      'No tomes decisiones precipitadas con información insuficiente.',
+      'No desplaces a personas heridas innecesariamente.'
     ]
   },
   {
-    titulo: 'Primeros auxilios básicos',
+    titulo: 'Primeros auxilios esenciales',
     items: [
-      'Si alguien no respira o no tiene pulso, llama a emergencias y, si estás capacitado, inicia RCP de forma inmediata.',
-      'Controla hemorragias con presión directa y venda limpia si tienes acceso a material.',
-      'Inmoviliza posibles fracturas y evita mover a una persona si sospechas lesión de columna.',
-      'Mantén a la persona abrigada, despierta y en un lugar seguro mientras llega ayuda.'
+      'Si alguien no respira, pide ayuda y, si sabes hacerlo, inicia RCP.',
+      'Detén hemorragias con presión directa usando una tela limpia.',
+      'Inmoviliza fracturas y evita mover a la persona si sospechas lesión de columna.',
+      'Mantén a las víctimas abrigadas y en un lugar seguro hasta que llegue ayuda.'
     ]
   }
 ]
@@ -87,7 +87,7 @@ export default function GuiaView() {
         <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-4 text-white">
           <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-300">Guía de emergencia</p>
           <h2 className="disp mt-1 text-xl font-black tracking-tight">Acciones clave para actuar con seguridad</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-300">Este contenido está pensado para ser claro, útil y confiable ante un sismo. Puede compartirse y consultarse en cualquier momento.</p>
+          <p className="mt-2 text-sm leading-6 text-slate-300">Guía práctica y directa para actuar con seguridad antes, durante y después de un sismo.</p>
           <button
             onClick={() => setOpenGuide(true)}
             className="focus-ring mt-3 inline-flex items-center rounded-full bg-white px-3.5 py-2 text-sm font-semibold text-slate-900 shadow-sm"

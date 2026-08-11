@@ -124,14 +124,22 @@ end;
 $$;
 
 create or replace function delete_persona(p_persona_id uuid, p_device_id text)
-returns void
+returns text
 language plpgsql
 security definer
 as $$
-declare v_foto_url text;
-        v_path text;
+declare
+  v_foto_url text;
+  v_path text;
+  v_exists int;
 begin
-  select foto_url into v_foto_url from personas where id = p_persona_id and owner_device = p_device_id;
+  select count(*), foto_url into v_exists, v_foto_url
+  from personas
+  where id = p_persona_id and owner_device = p_device_id;
+
+  if v_exists = 0 then
+    raise exception 'No autorizado para eliminar este reporte o el reporte no existe.';
+  end if;
 
   if v_foto_url is not null then
     v_path := substring(v_foto_url from '.*?/personas/(.*)$');
@@ -143,6 +151,7 @@ begin
   end if;
 
   delete from personas where id = p_persona_id and owner_device = p_device_id;
+  return 'ok';
 end;
 $$;
 
