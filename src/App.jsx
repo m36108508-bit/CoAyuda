@@ -80,7 +80,7 @@ export default function App() {
       )}
 
       {toast && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white text-sm font-medium px-4 py-2.5 rounded-full shadow-lg">
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 border border-slate-200 bg-white text-slate-800 text-sm font-semibold px-4 py-2.5 rounded-full shadow-lg shadow-slate-200/60">
           {toast}
         </div>
       )}

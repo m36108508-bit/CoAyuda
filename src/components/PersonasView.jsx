@@ -19,12 +19,17 @@ export default function PersonasView({ personas, onNuevo }) {
   const [tab, setTab] = useState('busca')
   const [q, setQ] = useState('')
 
+  const activas = useMemo(
+    () => personas.filter(p => !p.archivado && p.estado === 'desaparecido'),
+    [personas]
+  )
+
   const filtradas = useMemo(() => {
     const term = normaliza(q)
     return personas
       .filter(p => !p.archivado)
       .filter(p => (tab === 'busca' ? p.estado === 'desaparecido' : p.estado !== 'desaparecido'))
-      .filter(p => !term || normaliza(p.nombre).includes(term) || normaliza(p.cedula || '').includes(term))
+      .filter(p => !term || normaliza(p.nombre).includes(term) || normaliza(p.cedula || '').includes(term) || normaliza(p.ubicacion || '').includes(term))
       .sort((a, b) => new Date(b.creado_en) - new Date(a.creado_en))
   }, [personas, tab, q])
 
@@ -35,21 +40,46 @@ export default function PersonasView({ personas, onNuevo }) {
     })
     if (error) console.error(error)
   }
+
   async function reabrir(id) {
     const { error } = await supabase.rpc('reabrir_persona', { p_persona_id: id })
     if (error) console.error(error)
   }
 
+  async function compartirReporte(p) {
+    const texto = `CoAyuda: ${p.nombre} está reportado como ${estadoLabel[p.estado].toLowerCase()} en ${p.ubicacion}. Contacto: ${p.telefono || 'No indicado'}.`
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `CoAyuda - ${p.nombre}`,
+          text: texto,
+          url: window.location.href
+        })
+        return
+      } catch {
+        // sigue con la copia al portapapeles
+      }
+    }
+
+    await navigator.clipboard.writeText(texto)
+    window.alert('Se copió el dato del reporte para compartirlo.')
+  }
+
   return (
     <section>
+      <div className="mb-3 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-800">
+        <span className="font-bold">{activas.length}</span> personas activas en búsqueda
+      </div>
+
       <div className="flex gap-2 mb-3">
         <button
           onClick={() => setTab('busca')}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-bold border border-line ${tab === 'busca' ? 'bg-ink text-paper' : ''}`}
+          className={`flex-1 py-2.5 rounded-lg text-sm font-bold border border-line ${tab === 'busca' ? 'bg-sky-600 text-white' : 'bg-white text-slate-700'}`}
         >🔴 Se busca</button>
         <button
           onClick={() => setTab('salvo')}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-bold border border-line ${tab === 'salvo' ? 'bg-ink text-paper' : ''}`}
+          className={`flex-1 py-2.5 rounded-lg text-sm font-bold border border-line ${tab === 'salvo' ? 'bg-sky-600 text-white' : 'bg-white text-slate-700'}`}
         >🟢 Reportado a salvo</button>
       </div>
 
@@ -57,10 +87,10 @@ export default function PersonasView({ personas, onNuevo }) {
         <input
           value={q}
           onChange={e => setQ(e.target.value)}
-          placeholder="Buscar por nombre o cédula..."
-          className="focus-ring w-full py-3 pl-10 pr-3 rounded-lg border border-line text-base bg-white"
+          placeholder="Buscar por nombre, cédula o ubicación..."
+          className="focus-ring w-full py-3 pl-10 pr-3 rounded-lg border border-slate-200 text-base bg-white text-slate-800"
         />
-        <span className="absolute left-3 top-3 text-stone-400">🔎</span>
+        <span className="absolute left-3 top-3 text-slate-400">🔎</span>
       </div>
 
       <div className="space-y-3">
@@ -82,11 +112,16 @@ export default function PersonasView({ personas, onNuevo }) {
               </div>
               <p className="text-sm mt-2">📍 {p.ubicacion}</p>
               {p.telefono && <a href={`tel:${p.telefono}`} className="text-sm text-blue-700 font-semibold underline">📞 {p.telefono}</a>}
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-line">
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-line gap-2">
                 <span className="text-[11px] text-stone-400">{tiempoRelativo(p.creado_en)}</span>
-                <button onClick={() => votar(p.id)} className="focus-ring text-xs font-semibold px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200">
-                  ✓ Ya localizado ({p.votos_localizado || 0}/5)
-                </button>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => compartirReporte(p)} className="focus-ring text-xs font-semibold px-2.5 py-1.5 rounded-full bg-sky-100 text-sky-700">
+                    ↗ Compartir
+                  </button>
+                  <button onClick={() => votar(p.id)} className="focus-ring text-xs font-semibold px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200">
+                    ✓ Ya localizado ({p.votos_localizado || 0}/5)
+                  </button>
+                </div>
               </div>
             </div>
           )

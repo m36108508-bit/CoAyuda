@@ -1,9 +1,18 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { enqueue } from '../lib/offlineQueue'
+import { buildQueuedPersonaPayload, enqueue } from '../lib/offlineQueue'
 
 function normaliza(s = '') {
   return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
+
+function readAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = () => reject(new Error('No se pudo leer la imagen'))
+    reader.readAsDataURL(file)
+  })
 }
 
 export default function PersonaForm({ personas, onClose, onToast }) {
@@ -62,15 +71,16 @@ export default function PersonaForm({ personas, onClose, onToast }) {
         onToast('Reporte guardado ✓ se sincroniza con otros dispositivos')
       }
     } catch (err) {
+      const fotoDataUrl = fotoFile ? await readAsDataUrl(fotoFile) : null
       const payload = {
         nombre: nombre.trim(),
         cedula: cedula.trim() || null,
         estado,
         ubicacion: ubicacion.trim(),
         telefono: telefono.trim() || null,
-        foto_url: fotoPreview || null
+        foto_url: null
       }
-      enqueue({ table: 'personas', payload })
+      enqueue({ table: 'personas', payload: buildQueuedPersonaPayload(payload, fotoDataUrl) })
       onToast('Sin conexión: se guardó en tu equipo y se enviará automáticamente')
     } finally {
       setSaving(false)
