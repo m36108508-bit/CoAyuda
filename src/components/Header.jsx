@@ -25,7 +25,7 @@ export default function Header({ pendientes }) {
             </div>
             <div>
               <h1 className="disp text-xl font-black tracking-tight text-slate-950">CoAyuda</h1>
-              <p className="text-[12px] font-medium text-slate-500">Interfaz clara, ordenada y segura</p>
+              <p className="text-[12px] font-medium text-slate-500">Ayuda para localizar a quienes faltan tras el sismo</p>
             </div>
           </div>
 
