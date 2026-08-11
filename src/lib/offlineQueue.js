@@ -72,7 +72,11 @@ export function pendingCount() {
 
 export async function flushQueue(supabase, onProgress) {
   const q = readQueue()
-  if (q.length === 0) return
+  if (q.length === 0) {
+    if (onProgress) onProgress(0)
+    return []
+  }
+
   const remaining = []
 
   for (const item of q) {
@@ -86,11 +90,13 @@ export async function flushQueue(supabase, onProgress) {
 
       const { error } = await supabase.from(table).insert(nextPayload)
       if (error) throw error
-    } catch {
+    } catch (err) {
+      console.error('No se pudo procesar cola offline:', err)
       remaining.push(item)
     }
   }
 
   writeQueue(remaining)
   if (onProgress) onProgress(remaining.length)
+  return remaining
 }

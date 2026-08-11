@@ -32,11 +32,19 @@ export default function AcopioForm({ onClose, onToast, onSaved }) {
     try {
       const { error } = await supabase.from('acopios').insert(payload)
       if (error) throw error
-      onToast(tipo === 'zona_critica' ? 'Zona crítica registrada y sincronizada' : 'Centro de acopio registrado y sincronizado')
-    } catch {
-      enqueue({ table: 'acopios', payload })
-      onToast('Sin conexión: se guardó en tu equipo y se enviará automáticamente')
+      onToast(tipo === 'zona_critica' ? 'Zona crítica registrada y sincronizada' : 'Centro de acopio registrado y sincronizada')
       onSaved?.()
+    } catch (err) {
+      const mensaje = String(err?.message || '')
+      const isOffline = !navigator.onLine || /network|offline|fetch/i.test(mensaje)
+      if (isOffline) {
+        enqueue({ table: 'acopios', payload })
+        onToast('Sin conexión: se guardó en tu equipo y se enviará automáticamente')
+        onSaved?.()
+      } else {
+        console.error(err)
+        onToast('No se pudo guardar el reporte. Revisa los datos o intenta de nuevo.')
+      }
     } finally {
       setSaving(false)
       onClose()

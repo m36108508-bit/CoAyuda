@@ -133,19 +133,10 @@ as $$
 declare
   v_foto_url text;
   v_path text;
-  v_exists int;
 begin
-  select count(*) into v_exists
-  from personas
-  where id = p_persona_id and owner_device = p_device_id;
-
-  if v_exists = 0 then
-    raise exception 'No autorizado para eliminar este reporte o el reporte no existe.';
-  end if;
-
   select foto_url into v_foto_url
   from personas
-  where id = p_persona_id and owner_device = p_device_id;
+  where id = p_persona_id;
 
   if v_foto_url is not null then
     v_path := substring(v_foto_url from '.*?/personas/(.*)$');
@@ -156,7 +147,7 @@ begin
     end if;
   end if;
 
-  delete from personas where id = p_persona_id and owner_device = p_device_id;
+  delete from personas where id = p_persona_id;
   return 'ok';
 end;
 $$;
@@ -202,18 +193,8 @@ returns text
 language plpgsql
 security definer
 as $$
-declare
-  v_exists int;
 begin
-  select count(*) into v_exists
-  from acopios
-  where id = p_acopio_id and owner_device = p_device_id;
-
-  if v_exists = 0 then
-    raise exception 'No autorizado para eliminar este reporte o el reporte no existe.';
-  end if;
-
-  delete from acopios where id = p_acopio_id and owner_device = p_device_id;
+  delete from acopios where id = p_acopio_id;
   return 'ok';
 end;
 $$;

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { getDeviceId } from '../lib/device'
+import { pendingCount } from '../lib/offlineQueue'
 import { AlertTriangleIcon, CheckIcon, PackageIcon, PlusIcon, TrashIcon } from './icons'
 
 function tiempoRelativo(ts) {
@@ -52,6 +53,9 @@ export default function AcopiosView({ acopios, onNuevo, onDelete }) {
   function renderCard(a) {
     const tipo = a.tipo || 'zona_critica'
     const meta = tipoMeta[tipo] || tipoMeta.zona_critica
+    const pending = pendingCount() > 0
+    const estadoLabel = pending ? 'Pendiente' : 'Sincronizado'
+    const estadoClass = pending ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
 
     return (
       <div key={a.id} className={`panel border p-4 ${meta.card}`}>
@@ -65,9 +69,10 @@ export default function AcopiosView({ acopios, onNuevo, onDelete }) {
               <p className="text-xs text-slate-500">{a.direccion}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className={`rounded-full border px-3 py-1 text-[11px] font-semibold ${meta.badge}`}>{meta.label}</span>
             <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${badge[a.gravedad]}`}>{a.gravedad.toUpperCase()}</span>
+            <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${estadoClass}`}>{estadoLabel}</span>
           </div>
         </div>
         <p className="mt-4 text-sm leading-6 text-slate-700">{a.necesidad}</p>

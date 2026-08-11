@@ -52,6 +52,7 @@ export default function App() {
         throw error
       }
       setPersonas(prev => prev.filter(p => p.id !== personaId))
+      await cargarDatos()
       showToast('Reporte eliminado')
     } catch (err) {
       console.error(err)
@@ -70,6 +71,7 @@ export default function App() {
         throw error
       }
       setAcopios(prev => prev.filter(a => a.id !== acopioId))
+      await cargarDatos()
       showToast('Registro eliminado')
     } catch (err) {
       console.error(err)
@@ -89,11 +91,12 @@ export default function App() {
 
     const reintentar = async () => {
       try {
-        await flushQueue(supabase, setPendientes)
+        const remaining = await flushQueue(supabase, setPendientes)
+        if (remaining.length === 0) {
+          await cargarDatos()
+        }
       } catch (err) {
         console.error(err)
-      } finally {
-        cargarDatos()
       }
     }
     window.addEventListener('online', reintentar)
