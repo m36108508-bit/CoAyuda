@@ -4,7 +4,8 @@ export function buildPersonaPayload({
   estado,
   ubicacion,
   telefono,
-  foto_url
+  foto_url,
+  owner_device
 }) {
   return {
     nombre: String(nombre || '').trim(),
@@ -13,5 +14,6 @@ export function buildPersonaPayload({
     ubicacion: String(ubicacion || '').trim(),
     telefono: String(telefono || '').trim() || null,
     foto_url: String(foto_url || '').trim() || null
+    , ...(owner_device ? { owner_device } : {})
   }
 }

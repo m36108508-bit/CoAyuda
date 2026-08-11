@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from './lib/supabaseClient'
 import { flushQueue, pendingCount } from './lib/offlineQueue'
+import { getDeviceId } from './lib/device'
 import Header from './components/Header'
 import BottomNav from './components/BottomNav'
 import PersonasView from './components/PersonasView'
@@ -36,7 +37,7 @@ export default function App() {
     if (!confirmado) return
 
     try {
-      const { error } = await supabase.rpc('delete_persona', { p_persona_id: personaId })
+      const { error } = await supabase.rpc('delete_persona', { p_persona_id: personaId, p_device_id: getDeviceId() })
       if (error) throw error
       setPersonas(prev => prev.filter(p => p.id !== personaId))
       showToast('Reporte eliminado')

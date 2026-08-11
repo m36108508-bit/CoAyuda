@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { buildQueuedPersonaPayload, enqueue } from '../lib/offlineQueue'
 import { buildPersonaPayload } from '../lib/personaHelpers'
+import { getDeviceId } from '../lib/device'
 import { XIcon } from './icons'
 
 function normaliza(s = '') {
@@ -81,7 +82,8 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
         estado,
         ubicacion,
         telefono,
-        foto_url: persona?.foto_url || ''
+        foto_url: persona?.foto_url || '',
+        owner_device: getDeviceId()
       })
 
       if (persona) {
@@ -96,13 +98,14 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
           p_estado: payload.estado,
           p_ubicacion: payload.ubicacion,
           p_telefono: payload.telefono,
-          p_foto_url: fotoUrl || payload.foto_url || null
+          p_foto_url: fotoUrl || payload.foto_url || null,
+          p_device_id: getDeviceId()
         })
         if (error) throw error
         onToast('Reporte actualizado')
       } else {
         const foto_url = await uploadFoto()
-        const insertPayload = buildPersonaPayload({ nombre, cedula, estado, ubicacion, telefono, foto_url })
+        const insertPayload = buildPersonaPayload({ nombre, cedula, estado, ubicacion, telefono, foto_url, owner_device: getDeviceId() })
         if (duplicado) {
           const { error } = await supabase.from('personas')
             .update({ ...insertPayload, actualizado_en: new Date().toISOString() })
@@ -118,7 +121,7 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
     } catch (err) {
       console.error(err)
       const fotoDataUrl = fotoFile ? await readAsDataUrl(fotoFile) : null
-      const offlinePayload = buildPersonaPayload({ nombre, cedula, estado, ubicacion, telefono, foto_url: null })
+      const offlinePayload = buildPersonaPayload({ nombre, cedula, estado, ubicacion, telefono, foto_url: null, owner_device: getDeviceId() })
       enqueue({ table: 'personas', payload: buildQueuedPersonaPayload(offlinePayload, fotoDataUrl) })
       onToast('Sin conexión: se guardó en tu equipo y se enviará automáticamente')
     } finally {

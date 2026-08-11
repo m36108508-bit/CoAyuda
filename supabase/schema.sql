@@ -9,6 +9,7 @@ create extension if not exists "pgcrypto";
 create table if not exists personas (
   id uuid primary key default gen_random_uuid(),
   nombre text not null,
+  owner_device text,
   cedula text,
   estado text not null check (estado in ('desaparecido','encontrado','salvo')),
   ubicacion text not null,
@@ -102,7 +103,8 @@ create or replace function update_persona(
   p_estado text,
   p_ubicacion text,
   p_telefono text,
-  p_foto_url text
+  p_foto_url text,
+  p_device_id text
 )
 returns void
 language plpgsql
@@ -117,11 +119,11 @@ begin
       telefono = p_telefono,
       foto_url = p_foto_url,
       actualizado_en = now()
-  where id = p_persona_id;
+  where id = p_persona_id and owner_device = p_device_id;
 end;
 $$;
 
-create or replace function delete_persona(p_persona_id uuid)
+create or replace function delete_persona(p_persona_id uuid, p_device_id text)
 returns void
 language plpgsql
 security definer
@@ -129,7 +131,7 @@ as $$
 declare v_foto_url text;
         v_path text;
 begin
-  select foto_url into v_foto_url from personas where id = p_persona_id;
+  select foto_url into v_foto_url from personas where id = p_persona_id and owner_device = p_device_id;
 
   if v_foto_url is not null then
     v_path := substring(v_foto_url from '.*?/personas/(.*)$');
@@ -140,7 +142,7 @@ begin
     end if;
   end if;
 
-  delete from personas where id = p_persona_id;
+  delete from personas where id = p_persona_id and owner_device = p_device_id;
 end;
 $$;
 
@@ -194,8 +196,8 @@ $$;
 
 -- Permite al cliente (rol anon) ejecutar únicamente estas funciones controladas.
 grant execute on function votar_persona_localizado(uuid, text) to anon;
-grant execute on function update_persona(uuid, text, text, text, text, text, text) to anon;
-grant execute on function delete_persona(uuid) to anon;
+grant execute on function update_persona(uuid, text, text, text, text, text, text, text) to anon;
+grant execute on function delete_persona(uuid, text) to anon;
 grant execute on function reabrir_persona(uuid) to anon;
 grant execute on function votar_acopio_solucionado(uuid, text) to anon;
 grant execute on function reabrir_acopio(uuid) to anon;
