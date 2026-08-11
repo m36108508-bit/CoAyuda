@@ -28,4 +28,4 @@ jobs:
             exit 1;
           fi
           echo "Running migration against SUPABASE_DATABASE_URL"
-          psql "$SUPABASE_DATABASE_URL" -f supabase/migrations/0001_owner_device_migration.sql
+          psql -4 "$SUPABASE_DATABASE_URL" -f supabase/migrations/0001_owner_device_migration.sql
