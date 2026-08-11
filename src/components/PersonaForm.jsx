@@ -34,6 +34,11 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
   const [fotoPreview, setFotoPreview] = useState(persona?.foto_url || '')
   const [saving, setSaving] = useState(false)
 
+  function esErrorOffline(err) {
+    const mensaje = String(err?.message || '')
+    return !navigator.onLine || /network|offline|fetch/i.test(mensaje)
+  }
+
   useEffect(() => {
     return () => {
       if (fotoPreview && fotoPreview.startsWith('blob:')) {
@@ -67,7 +72,10 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
 
     if (uploadError) throw uploadError
 
-    const { data } = supabase.storage.from('personas').getPublicUrl(fileName)
+    const { data, error: publicUrlError } = supabase.storage.from('personas').getPublicUrl(fileName)
+    if (publicUrlError) throw publicUrlError
+    if (!data?.publicUrl) throw new Error('No se pudo obtener la URL pública de la foto.')
+
     return data.publicUrl
   }
 
@@ -122,11 +130,17 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
       console.error(err)
       const fotoDataUrl = fotoFile ? await readAsDataUrl(fotoFile) : null
       const offlinePayload = buildPersonaPayload({ nombre, cedula, estado, ubicacion, telefono, foto_url: null, owner_device: getDeviceId() })
-      enqueue({ table: 'personas', payload: buildQueuedPersonaPayload(offlinePayload, fotoDataUrl) })
-      onToast('Sin conexión: se guardó en tu equipo y se enviará automáticamente')
+      if (esErrorOffline(err)) {
+        enqueue({ table: 'personas', payload: buildQueuedPersonaPayload(offlinePayload, fotoDataUrl) })
+        onToast('Sin conexión: se guardó en tu equipo y se enviará automáticamente')
+      } else {
+        onToast(err?.message || 'No se pudo guardar el reporte. Revisa tu conexión e inténtalo de nuevo.')
+      }
     } finally {
       setSaving(false)
-      onClose()
+      if (!esErrorOffline()) {
+        onClose()
+      }
     }
   }
 

@@ -133,13 +133,17 @@ declare
   v_path text;
   v_exists int;
 begin
-  select count(*), foto_url into v_exists, v_foto_url
+  select count(*) into v_exists
   from personas
   where id = p_persona_id and owner_device = p_device_id;
 
   if v_exists = 0 then
     raise exception 'No autorizado para eliminar este reporte o el reporte no existe.';
   end if;
+
+  select foto_url into v_foto_url
+  from personas
+  where id = p_persona_id and owner_device = p_device_id;
 
   if v_foto_url is not null then
     v_path := substring(v_foto_url from '.*?/personas/(.*)$');
