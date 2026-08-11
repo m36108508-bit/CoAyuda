@@ -14,11 +14,11 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'Red Sismo Colombia',
-        short_name: 'Red Sismo',
-        description: 'Ayuda entre vecinos tras el terremoto: personas desaparecidas, zonas críticas y guía de emergencia. Funciona sin internet.',
-        theme_color: '#1c1917',
-        background_color: '#f7f5f0',
+        name: 'CoAyuda',
+        short_name: 'CoAyuda',
+        description: 'CoAyuda conecta a la comunidad para reportar personas desaparecidas, acopios y guías de ayuda con uso sencillo y rápido.',
+        theme_color: '#f8fafc',
+        background_color: '#f8fafc',
         display: 'standalone',
         start_url: '/',
         icons: [

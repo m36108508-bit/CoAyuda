@@ -13,6 +13,7 @@ create table if not exists personas (
   estado text not null check (estado in ('desaparecido','encontrado','salvo')),
   ubicacion text not null,
   telefono text,
+  foto_url text,
   votos_localizado int not null default 0,
   archivado boolean not null default false,
   creado_en timestamptz not null default now(),
@@ -154,3 +155,17 @@ grant execute on function reabrir_acopio(uuid) to anon;
 -- ============================================================
 alter publication supabase_realtime add table personas;
 alter publication supabase_realtime add table acopios;
+
+-- Bucket público para fotos de personas desaparecidas.
+insert into storage.buckets (id, name, public)
+values ('personas', 'personas', true)
+on conflict (id) do update set public = true;
+
+create policy "lectura publica fotos personas" on storage.objects
+for select using (bucket_id = 'personas');
+
+create policy "subida publica fotos personas" on storage.objects
+for insert with check (bucket_id = 'personas');
+
+create policy "actualizacion publica fotos personas" on storage.objects
+for update using (bucket_id = 'personas') with check (bucket_id = 'personas');

@@ -68,6 +68,9 @@ export default function PersonasView({ personas, onNuevo }) {
           const color = p.estado === 'desaparecido' ? 'border-l-red-600' : p.estado === 'salvo' ? 'border-l-emerald-600' : 'border-l-amber-600'
           return (
             <div key={p.id} className={`bg-white border border-line rounded-xl p-4 border-l-4 ${color}`}>
+              {p.foto_url && (
+                <img src={p.foto_url} alt={p.nombre} className="mb-3 h-40 w-full object-cover rounded-lg border border-slate-200" />
+              )}
               <div className="flex justify-between items-start gap-2">
                 <div>
                   <h4 className="font-bold text-base">{p.nombre}</h4>

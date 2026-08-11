@@ -3,12 +3,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#1c1917',
-        paper: '#f7f5f0',
-        alert: '#c2410c',
-        crit: '#b91c1c',
-        safe: '#15803d',
-        line: '#d9d4c7'
+        ink: '#0f172a',
+        paper: '#f8fafc',
+        alert: '#0ea5e9',
+        crit: '#ef4444',
+        safe: '#16a34a',
+        line: '#dbe4ee'
       },
       fontFamily: {
         disp: ['Archivo', 'system-ui', 'sans-serif'],
