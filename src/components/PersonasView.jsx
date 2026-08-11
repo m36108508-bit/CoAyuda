@@ -154,7 +154,7 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
           return (
             <div key={p.id} className="panel overflow-hidden border border-slate-200 p-0 sm:grid sm:grid-cols-[170px_1fr] sm:items-stretch">
               {p.foto_url && (
-                <div className="relative overflow-hidden bg-slate-100 sm:rounded-l-3xl">
+                <div className="relative overflow-hidden bg-slate-100 rounded-t-3xl sm:rounded-t-none sm:rounded-l-3xl">
                   <img src={p.foto_url} alt={p.nombre} className="h-52 w-full object-cover sm:h-full sm:w-[170px]" />
                 </div>
               )}
