@@ -16,9 +16,9 @@ export default function BottomNav({ view, setView }) {
             <button
               key={id}
               onClick={() => setView(id)}
-              className={`focus-ring flex flex-col items-center gap-1 py-2 text-[11px] font-semibold transition ${active ? 'text-slate-950' : 'text-slate-500'}`}
+              className={`focus-ring flex flex-col items-center gap-1 py-2 text-[12px] font-semibold transition ${active ? 'text-slate-950' : 'text-slate-500'}`}
             >
-              <span className={`flex h-9 w-9 items-center justify-center rounded-2xl ${active ? 'bg-slate-100 text-slate-950' : 'bg-slate-100/90 text-slate-400'}`}>
+              <span className={`flex h-10 w-10 items-center justify-center rounded-3xl ${active ? 'bg-slate-950 text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)]' : 'bg-slate-100 text-slate-400'}`}>
                 <Icon className="h-4 w-4" />
               </span>
               <span>{label}</span>

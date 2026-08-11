@@ -144,7 +144,7 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
           value={q}
           onChange={e => setQ(e.target.value)}
           placeholder="Buscar por nombre, cédula o ubicación..."
-          className="focus-ring w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-base text-slate-800 shadow-sm"
+          className="focus-ring w-full rounded-[28px] border border-slate-200 bg-white py-3 pl-10 pr-3 text-base text-slate-800 shadow-[0_8px_24px_rgba(15,23,42,0.08)]"
         />
         <span className="absolute left-3 top-3.5 text-slate-400"><SearchIcon className="h-4 w-4" /></span>
       </div>
@@ -152,61 +152,66 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
       <div className="space-y-3">
         {filtradas.map(p => {
           return (
-            <div key={p.id} className="panel overflow-hidden border border-slate-200 p-0 grid grid-cols-[110px_1fr]">
-              {p.foto_url ? (
-                <div className="relative overflow-hidden bg-slate-100">
-                  <img src={p.foto_url} alt={p.nombre} className="h-full w-full object-cover" />
-                </div>
-              ) : (
-                <div className="flex items-center justify-center bg-slate-100 p-2 text-center text-[11px] font-semibold text-slate-500">
-                  Sin foto
-                </div>
-              )}
-              <div className="flex flex-col gap-3 p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <h4 className="truncate font-bold text-sm text-slate-900">{p.nombre}</h4>
-                    {p.cedula && <p className="text-[11px] text-slate-500">CC {p.cedula}</p>}
+            <div
+              key={p.id}
+              className="group overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_18px_40px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(15,23,42,0.1)]"
+            >
+              <div className="grid gap-0 sm:grid-cols-[92px_1fr]">
+                {p.foto_url ? (
+                  <div className="relative h-28 overflow-hidden bg-slate-100 sm:h-auto">
+                    <img src={p.foto_url} alt={p.nombre} className="h-full w-full object-cover" />
                   </div>
-                  <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold ${estadoStyle[p.estado] || 'bg-slate-100 text-slate-700'}`}>
-                    {estadoLabel[p.estado] || 'Desconocido'}
-                  </span>
-                </div>
-
-                <div className="rounded-xl bg-slate-50 p-2.5">
-                  <div className="flex items-start gap-2 text-[12px] leading-5 text-slate-700">
-                    <MapPinIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
-                    <span className="line-clamp-2">{p.ubicacion}</span>
+                ) : (
+                  <div className="flex h-28 items-center justify-center bg-slate-100 p-3 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 sm:h-auto">
+                    Sin foto
                   </div>
-                  {p.telefono && (
-                    <a href={`tel:${p.telefono}`} className="mt-2 inline-flex items-center gap-2 text-[12px] font-semibold text-slate-700">
-                      <PhoneIcon className="h-3.5 w-3.5" />
-                      {p.telefono}
-                    </a>
-                  )}
-                </div>
+                )}
+                <div className="flex flex-col gap-2 p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <h4 className="truncate text-sm font-black tracking-tight text-slate-950">{p.nombre}</h4>
+                      {p.cedula && <p className="mt-1 text-[12px] text-slate-500">CC {p.cedula}</p>}
+                    </div>
+                    <span className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold ${estadoStyle[p.estado] || 'bg-slate-100 text-slate-700'}`}>
+                      {estadoLabel[p.estado] || 'Desconocido'}
+                    </span>
+                  </div>
 
-                <div className="flex flex-wrap items-center gap-2">
-                  <button onClick={() => onEditar?.(p)} className="focus-ring inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-700 transition hover:bg-slate-200">
-                    <PencilIcon className="h-3 w-3" />
-                    Editar
-                  </button>
-                  <button onClick={() => onEliminar?.(p.id, p.nombre)} className="focus-ring inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-1 text-[10px] font-semibold text-red-700 transition hover:bg-red-100">
-                    <TrashIcon className="h-3 w-3" />
-                    Eliminar
-                  </button>
-                  <button onClick={() => compartirReporte(p)} className="focus-ring inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-1 text-[10px] font-semibold text-sky-700 transition hover:bg-sky-100">
-                    <ShareIcon className="h-3 w-3" />
-                    Share
-                  </button>
-                </div>
+                  <div className="rounded-3xl bg-slate-50 p-3 text-sm text-slate-700 shadow-sm shadow-slate-200/50">
+                    <div className="flex items-start gap-2">
+                      <MapPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
+                      <span className="line-clamp-2">{p.ubicacion}</span>
+                    </div>
+                    {p.telefono && (
+                      <a href={`tel:${p.telefono}`} className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-slate-900">
+                        <PhoneIcon className="h-4 w-4 text-sky-600" />
+                        {p.telefono}
+                      </a>
+                    )}
+                  </div>
 
-                <div className="flex items-center justify-between gap-2 border-t border-slate-200 pt-2">
-                  <button onClick={() => votar(p.id)} className="focus-ring inline-flex flex-1 items-center justify-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-semibold text-slate-700 transition hover:bg-slate-50">
-                    <CheckIcon className="h-3.5 w-3.5" />
-                    Ya localizado ({p.votos_localizado || 0}/5)
-                  </button>
-                  <span className="text-[10px] text-slate-400">{tiempoRelativo(p.creado_en)}</span>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                    <button onClick={() => onEditar?.(p)} className="focus-ring inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-2 font-semibold text-slate-700 transition hover:bg-slate-50">
+                      <PencilIcon className="h-3.5 w-3.5" />
+                      Editar
+                    </button>
+                    <button onClick={() => onEliminar?.(p.id, p.nombre)} className="focus-ring inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-3 py-2 font-semibold text-red-700 transition hover:bg-red-100">
+                      <TrashIcon className="h-3.5 w-3.5" />
+                      Eliminar
+                    </button>
+                    <button onClick={() => compartirReporte(p)} className="focus-ring inline-flex items-center gap-1 rounded-full border border-sky-200 bg-sky-50 px-3 py-2 font-semibold text-sky-700 transition hover:bg-sky-100">
+                      <ShareIcon className="h-3.5 w-3.5" />
+                      Compartir
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col gap-3 border-t border-slate-200 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                    <button onClick={() => votar(p.id)} className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50">
+                      <CheckIcon className="h-4 w-4" />
+                      Ya localizado ({p.votos_localizado || 0}/5)
+                    </button>
+                    <span className="text-xs text-slate-400">{tiempoRelativo(p.creado_en)}</span>
+                  </div>
                 </div>
               </div>
             </div>

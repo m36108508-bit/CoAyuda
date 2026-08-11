@@ -18,6 +18,39 @@ function readAsDataUrl(file) {
   })
 }
 
+function dataUrlToFile(dataUrl, filename) {
+  const [meta, base64] = dataUrl.split(',')
+  const mime = meta.match(/:(.*?);/)[1]
+  const binary = atob(base64)
+  const array = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i += 1) {
+    array[i] = binary.charCodeAt(i)
+  }
+  return new File([array], filename, { type: mime })
+}
+
+async function cropImageToSquare(imageUrl) {
+  const img = new Image()
+  img.crossOrigin = 'anonymous'
+  img.src = imageUrl
+  await new Promise((resolve, reject) => {
+    img.onload = resolve
+    img.onerror = () => reject(new Error('No se pudo cargar la imagen para recortar'))
+  })
+
+  const size = Math.min(img.naturalWidth, img.naturalHeight)
+  const sx = (img.naturalWidth - size) / 2
+  const sy = (img.naturalHeight - size) / 2
+  const canvas = document.createElement('canvas')
+  const targetSize = 760
+  canvas.width = targetSize
+  canvas.height = targetSize
+  const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(img, sx, sy, size, size, 0, 0, targetSize, targetSize)
+  return canvas.toDataURL('image/jpeg', 0.92)
+}
+
 function parseStoragePathFromUrl(url) {
   if (!url) return null
   const match = url.match(/\/personas\/(.+)$/)
@@ -32,6 +65,10 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
   const [telefono, setTelefono] = useState(persona?.telefono || '')
   const [fotoFile, setFotoFile] = useState(null)
   const [fotoPreview, setFotoPreview] = useState(persona?.foto_url || '')
+  const [originalFotoFile, setOriginalFotoFile] = useState(null)
+  const [originalPreview, setOriginalPreview] = useState(persona?.foto_url || '')
+  const [fotoCropped, setFotoCropped] = useState(false)
+  const [cropError, setCropError] = useState('')
   const [saving, setSaving] = useState(false)
 
   function esErrorOffline(err) {
@@ -210,17 +247,76 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
               onChange={(e) => {
                 const file = e.target.files?.[0]
                 if (!file) return
+                const previewUrl = URL.createObjectURL(file)
                 setFotoFile(file)
-                setFotoPreview(URL.createObjectURL(file))
+                setOriginalFotoFile(file)
+                setOriginalPreview(previewUrl)
+                setFotoPreview(previewUrl)
+                setFotoCropped(false)
+                setCropError('')
               }}
-              className="focus-ring w-full border border-slate-200 rounded-lg p-2.5 mt-1 bg-white text-slate-800"
+              className="focus-ring w-full border border-slate-200 rounded-2xl p-3 mt-2 bg-white text-slate-800"
             />
             {(fotoPreview || persona?.foto_url) && (
-              <img src={fotoPreview || persona?.foto_url} alt="Vista previa" className="mt-3 h-32 w-full object-cover rounded-xl border border-slate-200" />
+              <div className="mt-3 overflow-hidden rounded-[26px] border border-slate-200 bg-slate-100 shadow-sm">
+                <div className="relative h-52 overflow-hidden bg-slate-200">
+                  <img
+                    src={fotoPreview || persona?.foto_url}
+                    alt="Vista previa"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent p-3 text-[11px] text-white">
+                    {fotoCropped ? 'Recorte aplicado' : 'Previsualización de la imagen'}
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 p-3">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!fotoPreview) return
+                      setCropError('')
+                      try {
+                        const dataUrl = await cropImageToSquare(fotoPreview)
+                        const croppedFile = dataUrlToFile(
+                          dataUrl,
+                          fotoFile?.name ? `recortada-${fotoFile.name}` : `recortada-${Date.now()}.jpg`
+                        )
+                        if (fotoPreview.startsWith('blob:')) URL.revokeObjectURL(fotoPreview)
+                        setFotoFile(croppedFile)
+                        setFotoPreview(URL.createObjectURL(croppedFile))
+                        setFotoCropped(true)
+                      } catch (err) {
+                        console.error(err)
+                        setCropError(err?.message || 'No se pudo recortar la imagen.')
+                      }
+                    }}
+                    className="focus-ring inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                  >
+                    Recortar imagen
+                  </button>
+                  {fotoCropped && originalPreview && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!originalPreview || !originalFotoFile) return
+                        if (fotoPreview.startsWith('blob:')) URL.revokeObjectURL(fotoPreview)
+                        setFotoFile(originalFotoFile)
+                        setFotoPreview(originalPreview)
+                        setFotoCropped(false)
+                        setCropError('')
+                      }}
+                      className="focus-ring inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    >
+                      Revertir recorte
+                    </button>
+                  )}
+                </div>
+                {cropError && <p className="px-3 pb-3 text-sm font-semibold text-red-700">{cropError}</p>}
+              </div>
             )}
           </div>
 
-          <button disabled={saving} type="submit" className="w-full py-3 rounded-lg bg-sky-600 text-white font-bold mt-2 disabled:opacity-60">
+          <button disabled={saving} type="submit" className="w-full py-3 rounded-3xl bg-slate-950 text-white font-semibold mt-2 shadow-[0_16px_32px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 disabled:opacity-60">
             {saving ? 'Guardando...' : persona ? 'Actualizar reporte' : 'Guardar reporte'}
           </button>
         </form>
