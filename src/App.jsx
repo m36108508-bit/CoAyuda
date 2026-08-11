@@ -50,6 +50,24 @@ export default function App() {
     }
   }, [showToast])
 
+  const eliminarAcopio = useCallback(async (acopioId, nombre) => {
+    const confirmado = window.confirm(`¿Quieres eliminar este registro de ${nombre}?\n\nEsta acción no se puede deshacer.`)
+    if (!confirmado) return
+
+    try {
+      const { error } = await supabase.rpc('delete_acopio', { p_acopio_id: acopioId, p_device_id: getDeviceId() })
+      if (error) {
+        throw error
+      }
+      setAcopios(prev => prev.filter(a => a.id !== acopioId))
+      showToast('Registro eliminado')
+    } catch (err) {
+      console.error(err)
+      const message = err?.details || err?.message || 'No se pudo eliminar el registro'
+      showToast(message)
+    }
+  }, [showToast])
+
   useEffect(() => {
     cargarDatos()
 
@@ -87,7 +105,11 @@ export default function App() {
           />
         )}
         {view === 'acopios' && (
-          <AcopiosView acopios={acopios} onNuevo={() => setModal({ type: 'acopio' })} />
+          <AcopiosView
+            acopios={acopios}
+            onNuevo={() => setModal({ type: 'acopio' })}
+            onDelete={eliminarAcopio}
+          />
         )}
         {view === 'guia' && <GuiaView />}
       </main>

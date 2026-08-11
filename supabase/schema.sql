@@ -35,6 +35,8 @@ create table if not exists acopios (
   direccion text not null,
   necesidad text not null,
   gravedad text not null check (gravedad in ('alta','media','baja')),
+  tipo text not null default 'zona_critica' check (tipo in ('zona_critica','centro_acopio')),
+  owner_device text,
   votos_solucionado int not null default 0,
   archivado boolean not null default false,
   creado_en timestamptz not null default now(),
@@ -195,6 +197,27 @@ begin
 end;
 $$;
 
+create or replace function delete_acopio(p_acopio_id uuid, p_device_id text)
+returns text
+language plpgsql
+security definer
+as $$
+declare
+  v_exists int;
+begin
+  select count(*) into v_exists
+  from acopios
+  where id = p_acopio_id and owner_device = p_device_id;
+
+  if v_exists = 0 then
+    raise exception 'No autorizado para eliminar este reporte o el reporte no existe.';
+  end if;
+
+  delete from acopios where id = p_acopio_id and owner_device = p_device_id;
+  return 'ok';
+end;
+$$;
+
 create or replace function reabrir_acopio(p_acopio_id uuid)
 returns void
 language plpgsql
@@ -213,6 +236,7 @@ grant execute on function update_persona(uuid, text, text, text, text, text, tex
 grant execute on function delete_persona(uuid, text) to anon;
 grant execute on function reabrir_persona(uuid) to anon;
 grant execute on function votar_acopio_solucionado(uuid, text) to anon;
+grant execute on function delete_acopio(uuid, text) to anon;
 grant execute on function reabrir_acopio(uuid) to anon;
 
 -- ============================================================
