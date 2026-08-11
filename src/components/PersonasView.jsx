@@ -29,7 +29,6 @@ function tiempoRelativo(ts) {
 const estadoLabel = { desaparecido: 'Desaparecido', encontrado: 'Encontrado', salvo: 'A salvo' }
 
 export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }) {
-  const [tab, setTab] = useState('busca')
   const [q, setQ] = useState('')
 
   const activas = useMemo(
@@ -41,10 +40,10 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
     const term = normaliza(q)
     return personas
       .filter(p => !p.archivado)
-      .filter(p => (tab === 'busca' ? p.estado === 'desaparecido' : p.estado !== 'desaparecido'))
+      .filter(p => p.estado === 'desaparecido')
       .filter(p => !term || normaliza(p.nombre).includes(term) || normaliza(p.cedula || '').includes(term) || normaliza(p.ubicacion || '').includes(term))
       .sort((a, b) => new Date(b.creado_en) - new Date(a.creado_en))
-  }, [personas, tab, q])
+  }, [personas, q])
 
   async function votar(id) {
     const { error } = await supabase.rpc('votar_persona_localizado', {
@@ -111,23 +110,11 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
         </div>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-2">
-        <button
-          onClick={() => setTab('busca')}
-          className={`rounded-2xl border px-3 py-2.5 text-sm font-bold transition-all ${tab === 'busca' ? 'border-slate-900 bg-gradient-to-br from-slate-900 to-slate-700 text-white shadow-[0_10px_24px_rgba(15,23,42,0.20)]' : 'border-slate-200 bg-gradient-to-br from-white to-slate-50 text-slate-700 shadow-[0_6px_14px_rgba(15,23,42,0.08)] hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]'}`}
-        >
+      <div className="mb-4">
+        <button className="w-full rounded-2xl border border-slate-900 bg-gradient-to-br from-slate-900 to-slate-700 px-3 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(15,23,42,0.20)]">
           <span className="inline-flex items-center justify-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
             Se busca
-          </span>
-        </button>
-        <button
-          onClick={() => setTab('salvo')}
-          className={`rounded-2xl border px-3 py-2.5 text-sm font-bold transition-all ${tab === 'salvo' ? 'border-emerald-700 bg-gradient-to-br from-emerald-600 to-emerald-500 text-white shadow-[0_10px_24px_rgba(16,185,129,0.22)]' : 'border-slate-200 bg-gradient-to-br from-white to-slate-50 text-slate-700 shadow-[0_6px_14px_rgba(15,23,42,0.08)] hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]'}`}
-        >
-          <span className="inline-flex items-center justify-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-            A salvo
           </span>
         </button>
       </div>
@@ -144,64 +131,62 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
 
       <div className="space-y-3">
         {filtradas.map(p => {
-          const color = p.estado === 'desaparecido' ? 'border-l-red-600' : p.estado === 'salvo' ? 'border-l-emerald-600' : 'border-l-amber-600'
           return (
-            <div key={p.id} className="panel overflow-hidden border border-slate-200 p-0 grid grid-cols-[1fr_1fr] min-h-[220px]">
+            <div key={p.id} className="panel overflow-hidden border border-slate-200 p-0 grid grid-cols-[110px_1fr]">
               {p.foto_url ? (
                 <div className="relative overflow-hidden bg-slate-100">
                   <img src={p.foto_url} alt={p.nombre} className="h-full w-full object-cover" />
                 </div>
               ) : (
-                <div className="flex items-center justify-center bg-slate-100 p-4 text-slate-500">
-                  Sin imagen
+                <div className="flex items-center justify-center bg-slate-100 p-2 text-center text-[11px] font-semibold text-slate-500">
+                  Sin foto
                 </div>
               )}
-              <div className="p-4 flex min-h-[220px] flex-col justify-between gap-4">
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h4 className="font-bold text-base text-slate-900">{p.nombre}</h4>
-                      {p.cedula && <p className="text-xs text-slate-500">CC {p.cedula}</p>}
-                    </div>
-                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${p.estado === 'desaparecido' ? 'bg-red-100 text-red-700' : p.estado === 'salvo' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                      {estadoLabel[p.estado]}
-                    </span>
+              <div className="flex flex-col gap-3 p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h4 className="truncate font-bold text-sm text-slate-900">{p.nombre}</h4>
+                    {p.cedula && <p className="text-[11px] text-slate-500">CC {p.cedula}</p>}
                   </div>
-
-                  <div className="rounded-2xl bg-slate-50 p-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-700">
-                      <MapPinIcon className="h-4 w-4 text-slate-500" />
-                      <span>{p.ubicacion}</span>
-                    </div>
-                    {p.telefono && (
-                      <a href={`tel:${p.telefono}`} className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-slate-700">
-                        <PhoneIcon className="h-3.5 w-3.5" />
-                        {p.telefono}
-                      </a>
-                    )}
-                  </div>
+                  <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold ${p.estado === 'desaparecido' ? 'bg-red-100 text-red-700' : p.estado === 'salvo' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                    {estadoLabel[p.estado]}
+                  </span>
                 </div>
 
-                <div className="flex flex-col gap-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button onClick={() => onEditar?.(p)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-200">
-                      <PencilIcon className="h-3.5 w-3.5" />
-                      Editar
-                    </button>
-                    <button onClick={() => onEliminar?.(p.id, p.nombre)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1.5 text-[11px] font-semibold text-red-700 transition hover:bg-red-100">
-                      <TrashIcon className="h-3.5 w-3.5" />
-                      Eliminar
-                    </button>
-                    <button onClick={() => compartirReporte(p)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-2.5 py-1.5 text-[11px] font-semibold text-sky-700 transition hover:bg-sky-100">
-                      <ShareIcon className="h-3.5 w-3.5" />
-                      Compartir
-                    </button>
+                <div className="rounded-xl bg-slate-50 p-2.5">
+                  <div className="flex items-start gap-2 text-[12px] leading-5 text-slate-700">
+                    <MapPinIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
+                    <span className="line-clamp-2">{p.ubicacion}</span>
                   </div>
-                  <button onClick={() => votar(p.id)} className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-50">
+                  {p.telefono && (
+                    <a href={`tel:${p.telefono}`} className="mt-2 inline-flex items-center gap-2 text-[12px] font-semibold text-slate-700">
+                      <PhoneIcon className="h-3.5 w-3.5" />
+                      {p.telefono}
+                    </a>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button onClick={() => onEditar?.(p)} className="focus-ring inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-700 transition hover:bg-slate-200">
+                    <PencilIcon className="h-3 w-3" />
+                    Editar
+                  </button>
+                  <button onClick={() => onEliminar?.(p.id, p.nombre)} className="focus-ring inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-1 text-[10px] font-semibold text-red-700 transition hover:bg-red-100">
+                    <TrashIcon className="h-3 w-3" />
+                    Eliminar
+                  </button>
+                  <button onClick={() => compartirReporte(p)} className="focus-ring inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-1 text-[10px] font-semibold text-sky-700 transition hover:bg-sky-100">
+                    <ShareIcon className="h-3 w-3" />
+                    Share
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 border-t border-slate-200 pt-2">
+                  <button onClick={() => votar(p.id)} className="focus-ring inline-flex flex-1 items-center justify-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-semibold text-slate-700 transition hover:bg-slate-50">
                     <CheckIcon className="h-3.5 w-3.5" />
                     Ya localizado ({p.votos_localizado || 0}/5)
                   </button>
-                  <span className="text-[11px] text-slate-400">{tiempoRelativo(p.creado_en)}</span>
+                  <span className="text-[10px] text-slate-400">{tiempoRelativo(p.creado_en)}</span>
                 </div>
               </div>
             </div>
