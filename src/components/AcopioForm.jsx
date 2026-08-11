@@ -9,7 +9,7 @@ const tipos = [
   { value: 'centro_acopio', label: 'Centro de acopio', description: 'Punto de ayuda y distribución' }
 ]
 
-export default function AcopioForm({ onClose, onToast }) {
+export default function AcopioForm({ onClose, onToast, onSaved }) {
   const [nombre, setNombre] = useState('')
   const [direccion, setDireccion] = useState('')
   const [necesidad, setNecesidad] = useState('')
@@ -36,6 +36,7 @@ export default function AcopioForm({ onClose, onToast }) {
     } catch {
       enqueue({ table: 'acopios', payload })
       onToast('Sin conexión: se guardó en tu equipo y se enviará automáticamente')
+      onSaved?.()
     } finally {
       setSaving(false)
       onClose()

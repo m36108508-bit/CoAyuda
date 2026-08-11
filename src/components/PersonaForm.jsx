@@ -53,11 +53,12 @@ async function cropImageToSquare(imageUrl) {
 
 function parseStoragePathFromUrl(url) {
   if (!url) return null
-  const match = url.match(/\/personas\/(.+)$/)
-  return match ? decodeURIComponent(match[1]) : null
+  const pathSegment = url.split('/personas/')[1]
+  if (!pathSegment) return null
+  return decodeURIComponent(pathSegment.split('?')[0])
 }
 
-export default function PersonaForm({ personas, persona, onClose, onToast }) {
+export default function PersonaForm({ personas, persona, onClose, onToast, onSaved }) {
   const [nombre, setNombre] = useState(persona?.nombre || '')
   const [cedula, setCedula] = useState(persona?.cedula || '')
   const [estado, setEstado] = useState(persona?.estado || 'desaparecido')
@@ -148,36 +149,52 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
         })
         if (error) throw error
         onToast('Reporte actualizado')
+        onSaved?.()
+        onClose()
       } else {
         const foto_url = await uploadFoto()
         const insertPayload = buildPersonaPayload({ nombre, cedula, estado, ubicacion, telefono, foto_url, owner_device: getDeviceId() })
         if (duplicado) {
+          const updatePayload = {
+            ...insertPayload,
+            actualizado_en: new Date().toISOString(),
+            foto_url: foto_url ?? duplicado.foto_url ?? null
+          }
           const { error } = await supabase.from('personas')
-            .update({ ...insertPayload, actualizado_en: new Date().toISOString() })
+            .update(updatePayload)
             .eq('id', duplicado.id)
           if (error) throw error
           onToast('Reporte actualizado')
+          onSaved?.()
+          onClose()
         } else {
           const { error } = await supabase.from('personas').insert(insertPayload)
           if (error) throw error
           onToast('Reporte guardado y sincronizado')
+          onSaved?.()
+          onClose()
         }
       }
     } catch (err) {
       console.error(err)
-      const fotoDataUrl = fotoFile ? await readAsDataUrl(fotoFile) : null
-      const offlinePayload = buildPersonaPayload({ nombre, cedula, estado, ubicacion, telefono, foto_url: null, owner_device: getDeviceId() })
-      if (esErrorOffline(err)) {
+      const isOffline = esErrorOffline(err)
+      if (isOffline && !persona) {
+        const fotoDataUrl = fotoFile ? await readAsDataUrl(fotoFile) : null
+        const offlinePayload = buildPersonaPayload({ nombre, cedula, estado, ubicacion, telefono, foto_url: null, owner_device: getDeviceId() })
         enqueue({ table: 'personas', payload: buildQueuedPersonaPayload(offlinePayload, fotoDataUrl) })
         onToast('Sin conexión: se guardó en tu equipo y se enviará automáticamente')
-      } else {
-        onToast(err?.message || 'No se pudo guardar el reporte. Revisa tu conexión e inténtalo de nuevo.')
+        onSaved?.()
+        onClose()
+        return
       }
+
+      onToast(
+        isOffline
+          ? 'Sin conexión: no se puede actualizar este reporte mientras estás offline.'
+          : err?.message || 'No se pudo guardar el reporte. Revisa tu conexión e inténtalo de nuevo.'
+      )
     } finally {
       setSaving(false)
-      if (!esErrorOffline()) {
-        onClose()
-      }
     }
   }
 

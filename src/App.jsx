@@ -24,13 +24,23 @@ export default function App() {
   }, [])
 
   const cargarDatos = useCallback(async () => {
-    const [{ data: p }, { data: a }] = await Promise.all([
-      supabase.from('personas').select('*').order('creado_en', { ascending: false }),
-      supabase.from('acopios').select('*').order('creado_en', { ascending: false })
-    ])
-    if (p) setPersonas(p)
-    if (a) setAcopios(a)
-  }, [])
+    try {
+      const [{ data: p, error: pError }, { data: a, error: aError }] = await Promise.all([
+        supabase.from('personas').select('*').order('creado_en', { ascending: false }),
+        supabase.from('acopios').select('*').order('creado_en', { ascending: false })
+      ])
+
+      if (pError || aError) {
+        throw pError || aError
+      }
+
+      setPersonas(p || [])
+      setAcopios(a || [])
+    } catch (err) {
+      console.error(err)
+      showToast('No se pudieron cargar los datos. Revisa tu conexión.')
+    }
+  }, [showToast])
 
   const eliminarPersona = useCallback(async (personaId, nombre) => {
     const confirmado = window.confirm(`¿Quieres eliminar este reporte de ${nombre}?\n\nEsta acción no se puede deshacer.`)
@@ -78,8 +88,13 @@ export default function App() {
       .subscribe()
 
     const reintentar = async () => {
-      await flushQueue(supabase, setPendientes)
-      cargarDatos()
+      try {
+        await flushQueue(supabase, setPendientes)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        cargarDatos()
+      }
     }
     window.addEventListener('online', reintentar)
     const interval = setInterval(reintentar, 15000)
@@ -100,8 +115,6 @@ export default function App() {
           <PersonasView
             personas={personas}
             onNuevo={() => setModal({ type: 'persona', persona: null })}
-            onEditar={(persona) => setModal({ type: 'persona', persona })}
-            onEliminar={eliminarPersona}
           />
         )}
         {view === 'acopios' && (
@@ -122,10 +135,11 @@ export default function App() {
           persona={modal.persona}
           onClose={() => setModal(null)}
           onToast={showToast}
+          onSaved={cargarDatos}
         />
       )}
       {modal?.type === 'acopio' && (
-        <AcopioForm onClose={() => setModal(null)} onToast={showToast} />
+        <AcopioForm onClose={() => setModal(null)} onToast={showToast} onSaved={cargarDatos} />
       )}
 
       {toast && (
