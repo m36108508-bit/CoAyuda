@@ -6,7 +6,7 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 if (!url || !anonKey) {
   // No detiene la app (útil en preview), pero avisa fuerte en consola.
   console.error(
-    '[Red Sismo] Faltan VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY. ' +
+    '[CoAyuda] Faltan VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY. ' +
     'Crea un archivo .env con esas variables (ver .env.example).'
   )
 }
