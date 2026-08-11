@@ -172,13 +172,26 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
             <label className="text-xs font-semibold text-slate-600">Cédula / Identificación (opcional)</label>
             <input value={cedula} onChange={e => setCedula(e.target.value)} className="focus-ring w-full border border-slate-200 rounded-lg p-2.5 mt-1 bg-white text-slate-800" />
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Estado *</label>
-            <select value={estado} onChange={e => setEstado(e.target.value)} className="focus-ring w-full border border-slate-200 rounded-lg p-2.5 mt-1 bg-white text-slate-800">
-              <option value="desaparecido">Desaparecido</option>
-              <option value="encontrado">Encontrado</option>
-              <option value="salvo">A salvo</option>
-            </select>
+            <div>
+            <span className="text-xs font-semibold text-slate-600">Tipo de reporte</span>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setEstado('desaparecido')}
+                className={`rounded-2xl border p-3 text-left text-sm font-semibold transition ${estado === 'desaparecido' ? 'border-slate-900 bg-slate-950 text-white' : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-900 hover:text-slate-900'}`}
+              >
+                <div>Persona desaparecida</div>
+                <p className="mt-1 text-[11px] font-normal text-slate-500">Falta en algún lugar y se necesita encontrarla.</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setEstado('sin_identidad')}
+                className={`rounded-2xl border p-3 text-left text-sm font-semibold transition ${estado === 'sin_identidad' ? 'border-slate-900 bg-slate-950 text-white' : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-900 hover:text-slate-900'}`}
+              >
+                <div>Persona sin identidad</div>
+                <p className="mt-1 text-[11px] font-normal text-slate-500">No se sabe quién es o necesita localizar a su familia.</p>
+              </button>
+            </div>
           </div>
           <div>
             <label className="text-xs font-semibold text-slate-600">Última ubicación conocida *</label>

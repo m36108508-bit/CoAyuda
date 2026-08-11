@@ -11,7 +11,7 @@ create table if not exists personas (
   nombre text not null,
   owner_device text,
   cedula text,
-  estado text not null check (estado in ('desaparecido','encontrado','salvo')),
+  estado text not null check (estado in ('desaparecido','sin_identidad','encontrado','salvo')),
   ubicacion text not null,
   telefono text,
   foto_url text,

@@ -66,6 +66,16 @@ const GUIA_COMPLETA = [
     ]
   }
 ]
+
+const LINEAS_AYUDA = [
+  { numero: '123', titulo: 'Línea única de emergencias', descripcion: 'Emergencias médicas, policía y bomberos', color: 'bg-slate-950' },
+  { numero: '132', titulo: 'Cruz Roja', descripcion: 'Atención y rescate', color: 'bg-red-600' },
+  { numero: '144', titulo: 'Defensa Civil', descripcion: 'Búsqueda y rescate', color: 'bg-amber-500' },
+  { numero: '119', titulo: 'Bomberos', descripcion: 'Incendios y rescate técnico', color: 'bg-orange-600' },
+  { numero: '155', titulo: 'Policía Nacional', descripcion: 'Seguridad y control de zonas', color: 'bg-sky-600' },
+  { numero: '165', titulo: 'Atención a víctimas', descripcion: 'Apoyo y orientación para damnificados', color: 'bg-emerald-600' }
+]
+
 const KEY = 'rsc_checklist'
 
 export default function GuiaView() {
@@ -98,21 +108,26 @@ export default function GuiaView() {
       </div>
 
       <div className="panel mb-4 p-4">
-        <h3 className="section-label mb-3">Llamadas directas</h3>
-        <div className="grid grid-cols-3 gap-2 text-center">
-          <a href="tel:132" className="focus-ring block rounded-2xl bg-red-600 py-3 text-white shadow-[0_8px_16px_rgba(220,38,38,0.2)]">
-            <div className="text-xl font-black">132</div><div className="text-[11px] font-semibold">Cruz Roja</div>
-          </a>
-          <a href="tel:144" className="focus-ring block rounded-2xl bg-amber-500 py-3 text-white shadow-[0_8px_16px_rgba(245,158,11,0.2)]">
-            <div className="text-xl font-black">144</div><div className="text-[11px] font-semibold">Defensa Civil</div>
-          </a>
-          <a href="tel:119" className="focus-ring block rounded-2xl bg-orange-600 py-3 text-white shadow-[0_8px_16px_rgba(249,115,22,0.2)]">
-            <div className="text-xl font-black">119</div><div className="text-[11px] font-semibold">Bomberos</div>
-          </a>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h3 className="section-label mb-2">Líneas de ayuda</h3>
+            <p className="text-sm text-slate-500">Contacta rápidamente los principales servicios de emergencia y apoyo.</p>
+          </div>
         </div>
-        <a href="tel:123" className="focus-ring mt-3 block rounded-2xl border border-slate-200 bg-slate-50 py-2.5 text-center text-sm font-black text-slate-800 shadow-sm">
-          Línea única de emergencias: 123
-        </a>
+
+        <div className="grid grid-cols-2 gap-3 pt-3 sm:grid-cols-3">
+          {LINEAS_AYUDA.map(linea => (
+            <a
+              key={linea.numero}
+              href={`tel:${linea.numero}`}
+              className={`focus-ring block rounded-2xl p-4 text-white shadow-[0_8px_16px_rgba(15,23,42,0.12)] ${linea.color}`}
+            >
+              <div className="text-2xl font-black leading-none">{linea.numero}</div>
+              <div className="mt-2 text-[11px] font-semibold uppercase tracking-[0.18em] opacity-90">{linea.titulo}</div>
+              <p className="mt-2 text-[11px] leading-5 opacity-90">{linea.descripcion}</p>
+            </a>
+          ))}
+        </div>
       </div>
 
       <div className="panel mb-4 p-4">

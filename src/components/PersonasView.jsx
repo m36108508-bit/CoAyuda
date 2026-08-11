@@ -26,13 +26,25 @@ function tiempoRelativo(ts) {
   if (h < 24) return `hace ${h} h`
   return `hace ${Math.floor(h / 24)} d`
 }
-const estadoLabel = { desaparecido: 'Desaparecido', encontrado: 'Encontrado', salvo: 'A salvo' }
+const estadoLabel = {
+  desaparecido: 'Desaparecido',
+  sin_identidad: 'Sin identidad',
+  encontrado: 'Encontrado',
+  salvo: 'A salvo'
+}
+
+const estadoStyle = {
+  desaparecido: 'bg-red-100 text-red-700',
+  sin_identidad: 'bg-amber-100 text-amber-700',
+  encontrado: 'bg-emerald-100 text-emerald-700',
+  salvo: 'bg-slate-100 text-slate-700'
+}
 
 export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }) {
   const [q, setQ] = useState('')
 
   const activas = useMemo(
-    () => personas.filter(p => !p.archivado && p.estado === 'desaparecido'),
+    () => personas.filter(p => !p.archivado && (p.estado === 'desaparecido' || p.estado === 'sin_identidad')),
     [personas]
   )
 
@@ -40,7 +52,7 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
     const term = normaliza(q)
     return personas
       .filter(p => !p.archivado)
-      .filter(p => p.estado === 'desaparecido')
+      .filter(p => p.estado === 'desaparecido' || p.estado === 'sin_identidad')
       .filter(p => !term || normaliza(p.nombre).includes(term) || normaliza(p.cedula || '').includes(term) || normaliza(p.ubicacion || '').includes(term))
       .sort((a, b) => new Date(b.creado_en) - new Date(a.creado_en))
   }, [personas, q])
@@ -156,8 +168,8 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
                     <h4 className="truncate font-bold text-sm text-slate-900">{p.nombre}</h4>
                     {p.cedula && <p className="text-[11px] text-slate-500">CC {p.cedula}</p>}
                   </div>
-                  <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold ${p.estado === 'desaparecido' ? 'bg-red-100 text-red-700' : p.estado === 'salvo' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                    {estadoLabel[p.estado]}
+                  <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold ${estadoStyle[p.estado] || 'bg-slate-100 text-slate-700'}`}>
+                    {estadoLabel[p.estado] || 'Desconocido'}
                   </span>
                 </div>
 
