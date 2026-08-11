@@ -36,7 +36,8 @@ contra tu Supabase real.
 #    VITE_SUPABASE_ANON_KEY
 ```
 En Railway, usa el comando de build por defecto (`npm install && npm run build`) y
-el comando de start: `npm run start`.
+el comando de start: `npm run start`. El script `start` ya ajusta el puerto de forma
+compatible con Railway y con Windows.
 
 ### Vercel
 ```bash
