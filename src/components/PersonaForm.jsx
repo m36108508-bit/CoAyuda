@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { buildQueuedPersonaPayload, enqueue } from '../lib/offlineQueue'
 import { buildPersonaPayload } from '../lib/personaHelpers'
+import { XIcon } from './icons'
 
 function normaliza(s = '') {
   return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -98,7 +99,7 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
           p_foto_url: fotoUrl || payload.foto_url || null
         })
         if (error) throw error
-        onToast('Reporte actualizado ✓')
+        onToast('Reporte actualizado')
       } else {
         const foto_url = await uploadFoto()
         const insertPayload = buildPersonaPayload({ nombre, cedula, estado, ubicacion, telefono, foto_url })
@@ -107,11 +108,11 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
             .update({ ...insertPayload, actualizado_en: new Date().toISOString() })
             .eq('id', duplicado.id)
           if (error) throw error
-          onToast('Reporte actualizado ✓')
+          onToast('Reporte actualizado')
         } else {
           const { error } = await supabase.from('personas').insert(insertPayload)
           if (error) throw error
-          onToast('Reporte guardado ✓ se sincroniza con otros dispositivos')
+          onToast('Reporte guardado y sincronizado')
         }
       }
     } catch (err) {
@@ -130,8 +131,13 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
     <div className="fixed inset-0 z-40 bg-black/50 flex items-end sm:items-center justify-center">
       <div className="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-5 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="disp font-bold text-lg text-slate-800">{persona ? 'Editar persona' : 'Reportar persona'}</h3>
-          <button onClick={onClose} className="text-2xl leading-none text-slate-600">✕</button>
+          <div>
+            <p className="section-label mb-1">Ficha</p>
+            <h3 className="disp font-bold text-lg text-slate-800">{persona ? 'Editar persona' : 'Reportar persona'}</h3>
+          </div>
+          <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200">
+            <XIcon className="h-4 w-4" />
+          </button>
         </div>
 
         {!persona && duplicado && (

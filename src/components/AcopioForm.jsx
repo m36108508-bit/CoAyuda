@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { enqueue } from '../lib/offlineQueue'
+import { XIcon } from './icons'
 
 export default function AcopioForm({ onClose, onToast }) {
   const [nombre, setNombre] = useState('')
@@ -16,7 +17,7 @@ export default function AcopioForm({ onClose, onToast }) {
     try {
       const { error } = await supabase.from('acopios').insert(payload)
       if (error) throw error
-      onToast('Zona registrada ✓ se sincroniza con otros dispositivos')
+      onToast('Zona registrada y sincronizada')
     } catch {
       enqueue({ table: 'acopios', payload })
       onToast('Sin conexión: se guardó en tu equipo y se enviará automáticamente')
@@ -34,7 +35,9 @@ export default function AcopioForm({ onClose, onToast }) {
             <p className="section-label mb-1">Reporte</p>
             <h3 className="disp text-lg font-black text-slate-900">Zona / acopio</h3>
           </div>
-          <button onClick={onClose} className="text-2xl leading-none text-slate-600">✕</button>
+          <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200">
+            <XIcon className="h-4 w-4" />
+          </button>
         </div>
         <form onSubmit={submit} className="space-y-3">
           <div>

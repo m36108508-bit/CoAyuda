@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { AlertTriangleIcon, PhoneIcon, ShieldIcon } from './icons'
 
 export default function Header({ pendientes }) {
   const [online, setOnline] = useState(navigator.onLine)
@@ -19,8 +20,8 @@ export default function Header({ pendientes }) {
       <div className="max-w-2xl mx-auto px-4 py-3.5">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 text-lg font-black text-white shadow-lg shadow-blue-200">
-              C
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-200">
+              <ShieldIcon className="h-5 w-5" />
             </div>
             <div>
               <h1 className="disp text-xl font-black tracking-tight text-slate-900">CoAyuda</h1>
@@ -38,15 +39,21 @@ export default function Header({ pendientes }) {
         </div>
 
         <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-3 py-2.5 shadow-sm">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.12em] text-red-700">Emergencia</p>
-            <p className="text-xs font-medium text-red-800">Si hay riesgo inmediato, llama a emergencias.</p>
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-100 text-red-600">
+              <AlertTriangleIcon className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-red-700">Emergencia</p>
+              <p className="text-xs font-medium text-red-800">Si hay riesgo inmediato, llama a emergencias.</p>
+            </div>
           </div>
           <a
             href="tel:123"
-            className="inline-flex items-center justify-center rounded-xl bg-red-600 px-3 py-2 text-xs font-bold text-white shadow-sm shadow-red-200"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-3 py-2 text-xs font-bold text-white shadow-sm shadow-red-200"
           >
-            🚨 Llamar 123
+            <PhoneIcon className="h-3.5 w-3.5" />
+            Llamar 123
           </a>
         </div>
       </div>
