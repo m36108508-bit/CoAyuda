@@ -103,6 +103,14 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
           Unidos para encontrar a las personas que faltan, ubicar ayuda y actuar con claridad cuando más importa.
         </p>
 
+        <button
+          onClick={onNuevo}
+          className="mt-4 inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(15,23,42,0.20)] transition hover:scale-[1.01]"
+        >
+          <PlusIcon className="h-4 w-4 stroke-[2.2]" />
+          Crear reporte
+        </button>
+
         <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-600">
           <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2">Personas</div>
           <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2">Ayuda</div>
@@ -226,7 +234,7 @@ function FabButton({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="focus-ring hidden sm:inline-flex fixed bottom-24 right-5 z-30 h-14 w-14 items-center justify-center rounded-full bg-slate-950 text-white shadow-[0_12px_30px_rgba(15,23,42,0.28)] ring-4 ring-white/80 transition duration-200 hover:scale-105 active:scale-95"
+      className="focus-ring inline-flex fixed bottom-24 right-5 z-30 h-14 w-14 items-center justify-center rounded-full bg-slate-950 text-white shadow-[0_12px_30px_rgba(15,23,42,0.28)] ring-4 ring-white/80 transition duration-200 hover:scale-105 active:scale-95"
     >
       <PlusIcon className="h-6 w-6 stroke-[2.2]" />
     </button>
