@@ -120,7 +120,7 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
       <div className="mb-4 grid grid-cols-2 gap-2">
         <button
           onClick={() => setTab('busca')}
-          className={`rounded-2xl border px-3 py-2.5 text-sm font-bold transition ${tab === 'busca' ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-200' : 'border-slate-200 bg-white text-slate-700'}`}
+          className={`rounded-2xl border px-3 py-2.5 text-sm font-bold transition-all ${tab === 'busca' ? 'border-slate-900 bg-gradient-to-br from-slate-900 to-slate-700 text-white shadow-[0_10px_24px_rgba(15,23,42,0.20)]' : 'border-slate-200 bg-gradient-to-br from-white to-slate-50 text-slate-700 shadow-[0_6px_14px_rgba(15,23,42,0.08)] hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]'}`}
         >
           <span className="inline-flex items-center justify-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
@@ -129,7 +129,7 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
         </button>
         <button
           onClick={() => setTab('salvo')}
-          className={`rounded-2xl border px-3 py-2.5 text-sm font-bold transition ${tab === 'salvo' ? 'border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-200' : 'border-slate-200 bg-white text-slate-700'}`}
+          className={`rounded-2xl border px-3 py-2.5 text-sm font-bold transition-all ${tab === 'salvo' ? 'border-emerald-700 bg-gradient-to-br from-emerald-600 to-emerald-500 text-white shadow-[0_10px_24px_rgba(16,185,129,0.22)]' : 'border-slate-200 bg-gradient-to-br from-white to-slate-50 text-slate-700 shadow-[0_6px_14px_rgba(15,23,42,0.08)] hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]'}`}
         >
           <span className="inline-flex items-center justify-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
@@ -152,48 +152,54 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
         {filtradas.map(p => {
           const color = p.estado === 'desaparecido' ? 'border-l-red-600' : p.estado === 'salvo' ? 'border-l-emerald-600' : 'border-l-amber-600'
           return (
-            <div key={p.id} className="panel border border-slate-200 p-4">
+            <div key={p.id} className="panel overflow-hidden border border-slate-200 p-0">
               {p.foto_url && (
-                <img src={p.foto_url} alt={p.nombre} className="mb-3 h-40 w-full object-cover rounded-2xl border border-slate-200" />
+                <img src={p.foto_url} alt={p.nombre} className="h-44 w-full object-cover" />
               )}
-              <div className="flex justify-between items-start gap-2">
-                <div>
-                  <h4 className="font-bold text-base text-slate-900">{p.nombre}</h4>
-                  {p.cedula && <p className="text-xs text-slate-500">CC {p.cedula}</p>}
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h4 className="font-bold text-base text-slate-900">{p.nombre}</h4>
+                    {p.cedula && <p className="text-xs text-slate-500">CC {p.cedula}</p>}
+                  </div>
+                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${p.estado === 'desaparecido' ? 'bg-red-100 text-red-700' : p.estado === 'salvo' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                    {estadoLabel[p.estado]}
+                  </span>
                 </div>
-                <span className={`text-[11px] font-bold px-2 py-1 rounded-full ${p.estado === 'desaparecido' ? 'bg-red-100 text-red-700' : p.estado === 'salvo' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                  {estadoLabel[p.estado]}
-                </span>
-              </div>
-              <div className="mt-2 flex items-center gap-2 text-sm text-slate-700">
-                <MapPinIcon className="h-4 w-4 text-slate-500" />
-                <span>{p.ubicacion}</span>
-              </div>
-              {p.telefono && (
-                <a href={`tel:${p.telefono}`} className="mt-1.5 inline-flex items-center gap-2 text-sm font-semibold text-blue-700 underline">
-                  <PhoneIcon className="h-3.5 w-3.5" />
-                  {p.telefono}
-                </a>
-              )}
-              <div className="mt-3 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
-                <span className="text-[11px] text-slate-400">{tiempoRelativo(p.creado_en)}</span>
-                <div className="flex flex-wrap items-center justify-end gap-2">
-                  <button onClick={() => onEditar?.(p)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-2.5 py-1.5 text-[11px] font-bold text-blue-700">
-                    <PencilIcon className="h-3.5 w-3.5" />
-                    Editar
-                  </button>
-                  <button onClick={() => onEliminar?.(p.id, p.nombre)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-red-100 px-2.5 py-1.5 text-[11px] font-bold text-red-700">
-                    <TrashIcon className="h-3.5 w-3.5" />
-                    Eliminar
-                  </button>
-                  <button onClick={() => compartirReporte(p)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-sky-100 px-2.5 py-1.5 text-[11px] font-bold text-sky-700">
-                    <ShareIcon className="h-3.5 w-3.5" />
-                    Compartir
-                  </button>
-                  <button onClick={() => votar(p.id)} className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-100">
-                    <CheckIcon className="h-3.5 w-3.5" />
-                    Ya localizado ({p.votos_localizado || 0}/5)
-                  </button>
+
+                <div className="mt-3 rounded-2xl bg-slate-50 p-3">
+                  <div className="flex items-center gap-2 text-sm text-slate-700">
+                    <MapPinIcon className="h-4 w-4 text-slate-500" />
+                    <span>{p.ubicacion}</span>
+                  </div>
+                  {p.telefono && (
+                    <a href={`tel:${p.telefono}`} className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-slate-700">
+                      <PhoneIcon className="h-3.5 w-3.5" />
+                      {p.telefono}
+                    </a>
+                  )}
+                </div>
+
+                <div className="mt-3 flex flex-col gap-2 border-t border-slate-200 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                  <span className="text-[11px] text-slate-400">{tiempoRelativo(p.creado_en)}</span>
+                  <div className="flex flex-wrap items-center justify-end gap-2">
+                    <button onClick={() => onEditar?.(p)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-200">
+                      <PencilIcon className="h-3.5 w-3.5" />
+                      Editar
+                    </button>
+                    <button onClick={() => onEliminar?.(p.id, p.nombre)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1.5 text-[11px] font-semibold text-red-700 transition hover:bg-red-100">
+                      <TrashIcon className="h-3.5 w-3.5" />
+                      Eliminar
+                    </button>
+                    <button onClick={() => compartirReporte(p)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-2.5 py-1.5 text-[11px] font-semibold text-sky-700 transition hover:bg-sky-100">
+                      <ShareIcon className="h-3.5 w-3.5" />
+                      Compartir
+                    </button>
+                    <button onClick={() => votar(p.id)} className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-50">
+                      <CheckIcon className="h-3.5 w-3.5" />
+                      Ya localizado ({p.votos_localizado || 0}/5)
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -233,9 +239,9 @@ function FabButton({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="focus-ring hidden sm:inline-flex fixed bottom-24 right-5 z-30 h-14 w-14 items-center justify-center rounded-full bg-alert text-white shadow-xl transition active:scale-95"
+      className="focus-ring hidden sm:inline-flex fixed bottom-24 right-5 z-30 h-14 w-14 items-center justify-center rounded-full bg-slate-950 text-white shadow-[0_12px_30px_rgba(15,23,42,0.28)] ring-4 ring-white/80 transition duration-200 hover:scale-105 active:scale-95"
     >
-      <PlusIcon className="h-6 w-6" />
+      <PlusIcon className="h-6 w-6 stroke-[2.2]" />
     </button>
   )
 }

@@ -93,9 +93,9 @@ export default function AcopiosView({ acopios, onNuevo }) {
 
       <button
         onClick={onNuevo}
-        className="focus-ring fixed bottom-24 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-alert text-white shadow-xl transition active:scale-95"
+        className="focus-ring fixed bottom-24 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-slate-950 text-white shadow-[0_12px_30px_rgba(15,23,42,0.28)] ring-4 ring-white/80 transition duration-200 hover:scale-105 active:scale-95"
       >
-        <PlusIcon className="h-6 w-6" />
+        <PlusIcon className="h-6 w-6 stroke-[2.2]" />
       </button>
     </section>
   )
