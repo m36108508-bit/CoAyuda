@@ -38,8 +38,8 @@ export default function Header({ pendientes }) {
           </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-3 py-2.5 shadow-sm">
-          <div className="flex items-center gap-2.5">
+        <div className="mt-3 flex flex-col gap-3 rounded-2xl border border-red-200 bg-red-50 px-3 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-100 text-red-600">
               <AlertTriangleIcon className="h-4 w-4" />
             </div>
@@ -50,7 +50,7 @@ export default function Header({ pendientes }) {
           </div>
           <a
             href="tel:123"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-3 py-2 text-xs font-bold text-white shadow-sm shadow-red-200"
+            className="inline-flex items-center gap-1.5 justify-center rounded-xl bg-red-600 px-3 py-2 text-xs font-bold text-white shadow-sm shadow-red-200"
           >
             <PhoneIcon className="h-3.5 w-3.5" />
             Llamar 123

@@ -71,10 +71,10 @@ export default function App() {
   }, [cargarDatos])
 
   return (
-    <div className="app-shell pb-24">
+    <div className="app-shell min-h-screen pb-28">
       <Header pendientes={pendientes} />
 
-      <main className="max-w-2xl mx-auto px-4 mt-5 pb-4">
+      <main className="max-w-2xl mx-auto px-4 mt-6 pb-8">
         {view === 'personas' && (
           <PersonasView
             personas={personas}

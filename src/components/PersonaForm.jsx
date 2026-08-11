@@ -131,8 +131,8 @@ export default function PersonaForm({ personas, persona, onClose, onToast }) {
   }
 
   return (
-    <div className="fixed inset-0 z-40 bg-black/50 flex items-end sm:items-center justify-center">
-      <div className="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-5 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-40 modal-backdrop flex items-end sm:items-center justify-center">
+      <div className="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-5 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-2xl">
         <div className="flex justify-between items-center mb-4">
           <div>
             <p className="section-label mb-1">Ficha</p>

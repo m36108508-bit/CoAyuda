@@ -9,7 +9,7 @@ const ITEMS = [
 export default function BottomNav({ view, setView }) {
   return (
     <nav className="fixed bottom-0 inset-x-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur-md shadow-[0_-8px_24px_rgba(15,23,42,0.08)]">
-      <div className="mx-auto grid max-w-2xl grid-cols-3 text-center">
+      <div className="mx-auto grid max-w-2xl grid-cols-3 text-center py-2.5">
         {ITEMS.map(({ id, label, Icon }) => {
           const active = view === id
           return (

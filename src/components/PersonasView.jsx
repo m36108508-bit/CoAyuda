@@ -101,7 +101,7 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
           Unidos para encontrar a las personas que faltan, ubicar ayuda y actuar con claridad cuando más importa.
         </p>
 
-        <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px] font-bold text-blue-50">
+        <div className="mt-4 grid grid-cols-1 gap-2 text-center text-[11px] font-bold text-blue-50 sm:grid-cols-3">
           <div className="rounded-xl bg-white/10 px-2 py-2 backdrop-blur-sm">
             <div className="mb-1 flex justify-center"><UserIcon className="h-4 w-4" /></div>
             Personas
@@ -175,7 +175,7 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
                   {p.telefono}
                 </a>
               )}
-              <div className="mt-3 flex items-center justify-between gap-2 border-t border-slate-200 pt-3">
+              <div className="mt-3 flex flex-col gap-2 border-t border-slate-200 pt-3 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-[11px] text-slate-400">{tiempoRelativo(p.creado_en)}</span>
                 <div className="flex flex-wrap items-center justify-end gap-2">
                   <button onClick={() => onEditar?.(p)} className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-2.5 py-1.5 text-[11px] font-bold text-blue-700">

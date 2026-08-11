@@ -28,8 +28,8 @@ export default function AcopioForm({ onClose, onToast }) {
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/50 sm:items-center">
-      <div className="max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 sm:max-w-md sm:rounded-2xl">
+    <div className="fixed inset-0 z-40 modal-backdrop flex items-end justify-center sm:items-center">
+      <div className="max-h-[calc(100vh-4rem)] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-2xl sm:max-w-md sm:rounded-2xl">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <p className="section-label mb-1">Reporte</p>
