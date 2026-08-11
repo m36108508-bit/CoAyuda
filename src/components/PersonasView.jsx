@@ -81,40 +81,56 @@ export default function PersonasView({ personas, onNuevo, onEditar, onEliminar }
 
   return (
     <section>
-      <div className="panel mb-4 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 p-4 text-white">
-        <div className="flex items-start justify-between gap-3">
+      <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-700 p-4 text-white shadow-xl shadow-slate-800/20">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 shadow-inner shadow-white/20">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 shadow-inner shadow-white/15">
               <ShieldIcon className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-100">Inicio</p>
-              <h2 className="disp text-2xl font-black tracking-tight">CoAyuda</h2>
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">Inicio</p>
+              <h2 className="disp text-2xl font-black tracking-tight text-white">CoAyuda</h2>
             </div>
           </div>
-          <span className="rounded-full bg-white/12 px-2.5 py-1 text-xs font-bold text-blue-50">
-            {activas.length} activas
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-white/90">
+              {activas.length} activas
+            </span>
+            <button
+              onClick={onNuevo}
+              className="hidden rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-950 transition hover:bg-slate-100 sm:inline-flex"
+            >
+              Nuevo reporte
+            </button>
+          </div>
         </div>
 
-        <p className="mt-3 text-sm font-semibold leading-6 text-blue-100 max-w-xl">
-          Unidos para encontrar a las personas que faltan, ubicar ayuda y actuar con claridad cuando más importa.
-        </p>
+        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-xl text-sm font-semibold leading-6 text-slate-100">
+            Unidos para encontrar a las personas que faltan, ubicar ayuda y actuar con claridad cuando más importa.
+          </p>
+          <button
+            onClick={onNuevo}
+            className="inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-950 transition hover:bg-slate-100 sm:hidden"
+          >
+            Nuevo reporte
+          </button>
+        </div>
 
-        <div className="mt-4 flex flex-wrap justify-center gap-2 text-[11px] font-bold text-blue-50">
-          <div className="rounded-full bg-white/10 px-3 py-2 backdrop-blur-sm">
+        <div className="mt-4 flex flex-wrap justify-center gap-2 text-[11px] font-bold text-white/90">
+          <div className="rounded-full border border-white/10 bg-white/10 px-3 py-2">
             <div className="flex items-center justify-center gap-2">
               <UserIcon className="h-4 w-4" />
               Personas
             </div>
           </div>
-          <div className="rounded-full bg-white/10 px-3 py-2 backdrop-blur-sm">
+          <div className="rounded-full border border-white/10 bg-white/10 px-3 py-2">
             <div className="flex items-center justify-center gap-2">
               <PackageIcon className="h-4 w-4" />
               Ayuda
             </div>
           </div>
-          <div className="rounded-full bg-white/10 px-3 py-2 backdrop-blur-sm">
+          <div className="rounded-full border border-white/10 bg-white/10 px-3 py-2">
             <div className="flex items-center justify-center gap-2">
               <ShieldIcon className="h-4 w-4" />
               Guía
