@@ -1,0 +1,87 @@
+import { useMemo } from 'react'
+import { supabase } from '../lib/supabaseClient'
+import { getDeviceId } from '../lib/device'
+
+function tiempoRelativo(ts) {
+  const min = Math.floor((Date.now() - new Date(ts).getTime()) / 60000)
+  if (min < 1) return 'ahora mismo'
+  if (min < 60) return `hace ${min} min`
+  const h = Math.floor(min / 60)
+  if (h < 24) return `hace ${h} h`
+  return `hace ${Math.floor(h / 24)} d`
+}
+const badge = { alta: 'bg-red-100 text-red-800', media: 'bg-amber-100 text-amber-800', baja: 'bg-emerald-100 text-emerald-800' }
+const borde = { alta: 'border-l-red-600', media: 'border-l-amber-600', baja: 'border-l-emerald-600' }
+const peso = { alta: 0, media: 1, baja: 2 }
+
+export default function AcopiosView({ acopios, onNuevo }) {
+  const activos = useMemo(() =>
+    acopios.filter(a => !a.archivado)
+      .sort((a, b) => peso[a.gravedad] - peso[b.gravedad] || new Date(b.creado_en) - new Date(a.creado_en))
+  , [acopios])
+  const archivados = acopios.filter(a => a.archivado)
+
+  async function votar(id) {
+    const { error } = await supabase.rpc('votar_acopio_solucionado', {
+      p_acopio_id: id,
+      p_device_id: getDeviceId()
+    })
+    if (error) console.error(error)
+  }
+  async function reabrir(id) {
+    const { error } = await supabase.rpc('reabrir_acopio', { p_acopio_id: id })
+    if (error) console.error(error)
+  }
+
+  return (
+    <section>
+      <h2 className="disp font-bold text-lg mb-3">Zonas críticas y centros de acopio</h2>
+      <div className="flex gap-2 mb-4 text-xs font-semibold">
+        <span className="px-2.5 py-1 rounded-full bg-red-100 text-red-800 border border-red-200">● Alta</span>
+        <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200">● Media</span>
+        <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">● Baja</span>
+      </div>
+
+      <div className="space-y-3">
+        {activos.map(a => (
+          <div key={a.id} className={`bg-white border border-line rounded-xl p-4 border-l-4 ${borde[a.gravedad]}`}>
+            <div className="flex justify-between items-start gap-2">
+              <h4 className="font-bold text-base">{a.nombre}</h4>
+              <span className={`text-[11px] font-bold px-2 py-1 rounded-full ${badge[a.gravedad]}`}>{a.gravedad.toUpperCase()}</span>
+            </div>
+            <p className="text-xs text-stone-500 mt-0.5">{a.direccion}</p>
+            <p className="text-sm mt-2 font-medium">⚠️ {a.necesidad}</p>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-line">
+              <span className="text-[11px] text-stone-400">{tiempoRelativo(a.creado_en)}</span>
+              <button onClick={() => votar(a.id)} className="focus-ring text-xs font-semibold px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200">
+                ✓ Ya solucionado ({a.votos_solucionado || 0}/3)
+              </button>
+            </div>
+          </div>
+        ))}
+        {activos.length === 0 && (
+          <p className="text-center text-stone-500 text-sm py-10">Aún no hay reportes de acopio. Registra el primero.</p>
+        )}
+      </div>
+
+      {archivados.length > 0 && (
+        <div className="mt-6 pt-4 border-t border-dashed border-line">
+          <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mb-2">Posiblemente resueltos ({archivados.length})</p>
+          <div className="space-y-2">
+            {archivados.map(a => (
+              <div key={a.id} className="flex items-center justify-between bg-stone-100 rounded-lg px-3 py-2 text-sm">
+                <span className="text-stone-500">{a.nombre} — marcado solucionado {a.votos_solucionado}×</span>
+                <button onClick={() => reabrir(a.id)} className="focus-ring text-xs font-bold text-alert underline shrink-0 ml-2">Sigue faltando, reabrir</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <button
+        onClick={onNuevo}
+        className="focus-ring fixed bottom-24 right-5 z-30 w-14 h-14 rounded-full bg-alert text-white text-3xl font-bold shadow-xl flex items-center justify-center active:scale-95 transition"
+      >+</button>
+    </section>
+  )
+}

@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: #f7f5f0;
+  color: #1c1917;
+}
+.disp { font-family: 'Archivo', system-ui, sans-serif; }
+.focus-ring:focus { outline: 3px solid #c2410c; outline-offset: 2px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: #c7c2b3; border-radius: 3px; }
