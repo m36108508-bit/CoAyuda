@@ -222,3 +222,13 @@ for insert with check (bucket_id = 'personas');
 
 create policy "actualizacion publica fotos personas" on storage.objects
 for update using (bucket_id = 'personas') with check (bucket_id = 'personas');
+
+-- ============================================================
+-- MIGRACIÓN: asignar owner_device a registros existentes y forzar NOT NULL
+-- Ejecutar en Supabase SQL editor para que tome efecto en la base de datos
+-- ============================================================
+-- update personas set owner_device = 'migrated' where owner_device is null;
+-- alter table personas alter column owner_device set not null;
+
+-- Nota: las líneas están comentadas para que revises antes de ejecutar.
+-- Si confías en la migración automática, descomenta ambas y ejecútalas.
